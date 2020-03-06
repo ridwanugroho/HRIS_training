@@ -6,27 +6,22 @@
     <title>@ViewData["Title"] - HRIS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/tailwindcss/dist/tailwind.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HRIS</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+        <nav class="flex items-center justify-between flex-wrap bg-purple-500 p-6">
+            <div id="menu-tab-left">
+                <div class="flex items-center flex-shrink-0 text-white mr-6">
+                    <img src="~/img/logo.png" class="fill-current h-8 w-8 mr-2" />
+                    <span class="font-semibold text-xl tracking-tight">HR Information System</span>
                 </div>
             </div>
+            <ul class="flex">
+                <li class="mr-6">
+                    <a class="text-white hover:text-blue-800" asp-controller="Admin" asp-action="Index">LOGIN</a>
+                </li>
+            </ul>
         </nav>
     </header>
     <div class="container">

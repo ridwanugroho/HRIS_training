@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using HRIS.Models;
 using HRIS.Controllers;
 using HRIS.Data;
+using System.Net;
 
 namespace HRIS
 {
@@ -65,6 +66,11 @@ namespace HRIS
 
             services.AddControllersWithViews();
             services.AddSignalR();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(3);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,7 +78,15 @@ namespace HRIS
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseStatusCodePages(async context =>
+                {
+                    var response = context.HttpContext.Response;
+
+                    if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||
+                        response.StatusCode == (int)HttpStatusCode.Forbidden)
+                        response.Redirect("/Error/UnauthorizedCustom");
+                });
             }
             else
             {

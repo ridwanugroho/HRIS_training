@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Show";
+    var emps = ViewData["employees"] as List<HRIS.Models.Employee>;
+}
+
+<div>
+    <table class="table-auto">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">No</th>
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Position</th>
+                <th class="px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var i = 1;}
+            @foreach(var e in emps)
+            {
+                <tr>
+                    <td class="border px-4 py-2">@i</td>
+                    <td class="border px-4 py-2">
+                        <img src="~/@e.Photo" />
+                        @e.FullName
+                    </td>
+                    <td class="border px-4 py-2">@e.Role.Name</td>
+                    <td class="border px-4 py-2">
+                        <button class="btn">Message</button>
+                        <button class="btn">Update</button>
+                        <button class="btn">Options</button>
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>
+

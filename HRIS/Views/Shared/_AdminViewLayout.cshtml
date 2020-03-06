@@ -1,0 +1,67 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HRIS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/tailwindcss/dist/tailwind.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="flex items-center justify-between flex-wrap bg-purple-500 p-6">
+            <div id="menu-tab-left">
+                <div class="flex items-center flex-shrink-0 text-white mr-6">
+                    <img src="~/img/logo.png" class="fill-current h-8 w-8 mr-2" />
+                    <span class="font-semibold text-xl tracking-tight">HR Information System</span>
+                </div>
+                <ul class="flex">
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" asp-controller="Dashboard" asp-action="Index">DASHBOARD</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" asp-controller="Employee" asp-action="Index">EMPLOYEES</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" href="#">ATTENDANCES</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" href="#">APPLICANTS</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" href="#">LEAVE REQUEST</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" href="#">BROADCAST</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="menu-tab-right">
+                <ul class="flex">
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" href="#">ADMIN</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" asp-controller="Admin" asp-action="Logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

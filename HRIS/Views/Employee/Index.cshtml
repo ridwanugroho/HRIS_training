@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_AdminViewLAyout";
+}
+
+<div class="container w-9/10">
+    <div id="emp-toolbar" class="my-3">
+        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Export Displayed</button>
+        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Export All</button>
+        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
+        <button onclick="javascript: window.location.href = '/Employee/Add'" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Employee</button>
+    </div>
+    <div id="emp-info" class="bg-gray-100">
+        No Employee :(
+    </div>
+</div>
+
