@@ -24,7 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="SignalR\" />
     <Folder Include="wwwroot\img\usr_img\" />
+    <Folder Include="wwwroot\doc\" />
   </ItemGroup>
 
 

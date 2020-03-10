@@ -16,6 +16,7 @@ namespace HRIS.Models
         public DateTime DOB { get; set; }
         public string Religion { get; set; }
         public DateTime JoinDate { get; set; }
+        public string Email { get; set; }
         public string Phone { get; set; }
         [JsonIgnore]
         public string _role { get; set; }

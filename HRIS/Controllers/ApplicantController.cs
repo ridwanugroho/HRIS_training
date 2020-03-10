@@ -34,11 +34,11 @@ namespace HRIS.Controllers
         {
             ViewData["filters"] = new { perpage, page, order, filter, status };
 
-            var emps = (from e in db.Applicant where e.DataStatus != 0 select e).ToList();
+            var apls = (from e in db.Applicant where e.DataStatus != 0 select e).ToList();
 
             if (!string.IsNullOrEmpty(filter) || !string.IsNullOrWhiteSpace(filter))
             {
-                emps = (from i in emps
+                apls = (from i in apls
                         where i.FullName.Contains(filter) ||
                                 i.Role.Name.Contains(filter) ||
                                 i.Role.Division.Contains(filter) ||
@@ -48,11 +48,11 @@ namespace HRIS.Controllers
 
             if (order != null)
             {
-                emps = orderBy(emps, order);
+                apls = orderBy(apls, order);
             }
 
             if (status.HasValue)
-                emps = (from e in emps where e.Role.Status == status select e).ToList();
+                apls = (from e in apls where e.Role.Status == status.Value select e).ToList();
 
             ViewBag.order = order;
             ViewBag.filter = filter;
@@ -62,16 +62,16 @@ namespace HRIS.Controllers
             if (perpage.HasValue)
                 _perPage = perpage.Value;
 
-            var pager = new Pager(emps.Count(), page, _perPage);
+            var pager = new Pager(apls.Count(), page, _perPage);
 
             var viewModel = new ApplicantPager
             {
-                Items = emps.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+                Items = apls.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
                 Pager = pager
             };
 
 
-            ViewData["Applicants"] = emps.ToList<Applicant>();
+            ViewData["Applicants"] = apls.ToList<Applicant>();
             
 
             return View(viewModel);
@@ -128,6 +128,28 @@ namespace HRIS.Controllers
             return Ok(filename.Substring(8));
         }
 
+
+        [HttpPost("UploadCV")]
+        public async Task<IActionResult> UploadCV([FromForm(Name = "file")] IFormFile files)
+        {
+            var path = "wwwroot/doc/";
+            var filename = "";
+            Directory.CreateDirectory(path);
+            if (files != null)
+            {
+                Console.WriteLine("ada filenya : {0}", files.FileName);
+
+                filename = Path.Combine(path, Path.GetRandomFileName() + ".pdf");
+                using (var stream = new FileStream(filename, FileMode.Create))
+                {
+                    await files.CopyToAsync(stream);
+                }
+            }
+
+            return Ok(filename.Substring(8));
+        }
+
+
         [HttpGet("Detail/{id}")]
         public IActionResult Detail(string id)
         {
@@ -176,36 +198,36 @@ namespace HRIS.Controllers
 
 
 
-        public static List<Applicant> orderBy(List<Applicant> emps, int? order)
+        public static List<Applicant> orderBy(List<Applicant> apls, int? order)
         {
             switch (order)
             {
                 case 1:
-                    emps = emps.OrderBy(p => p.FullName).ToList();
+                    apls = apls.OrderBy(p => p.FullName).ToList();
                     break;
 
                 case 2:
-                    emps = emps.OrderByDescending(p => p.FullName).ToList();
+                    apls = apls.OrderByDescending(p => p.FullName).ToList();
                     break;
 
                 case 3:
-                    emps = emps.OrderBy(p => p.Role.Division).ToList();
+                    apls = apls.OrderBy(p => p.Role.Division).ToList();
                     break;
 
                 case 4:
-                    emps = emps.OrderByDescending(p => p.Role.SubDivision).ToList();
+                    apls = apls.OrderByDescending(p => p.Role.SubDivision).ToList();
                     break;
 
                 case 5:
-                    emps = emps.OrderBy(p => p.JoinDate).ToList();
+                    apls = apls.OrderBy(p => p.JoinDate).ToList();
                     break;
 
                 case 6:
-                    emps = emps.OrderByDescending(p => p.JoinDate).ToList();
+                    apls = apls.OrderByDescending(p => p.JoinDate).ToList();
                     break;
             }
 
-            return emps;
+            return apls;
         }
         public class ApplicantPager
         {

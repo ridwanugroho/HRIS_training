@@ -13,32 +13,32 @@ using System.IO;
 
 namespace HRIS.Controllers
 {
-    public class EmployeeIOController : Controller
+    public class ApplicantIOController : Controller
     {
         private AppDbContext db;
 
 
-        public EmployeeIOController(AppDbContext db)
+        public ApplicantIOController(AppDbContext db)
         {
             this.db = db;
         }
 
-        public FileResult GenereateAllEmployee()
+        public FileResult GenereateAllApplicant()
         {
-            var emps = from e in db.Employee where e.DataStatus != 0 select e;
+            var apls = from e in db.Applicant where e.DataStatus != 0 select e;
 
-            return Download(emps.ToList());
+            return Download(apls.ToList());
         }
-        
+
         public FileResult PartialDownload(int? perpage, int? page, int? order, string filter, int? status)
         {
             Console.WriteLine("download partial data");
 
-            var emps = (from e in db.Employee where e.DataStatus != 0 select e).ToList();
+            var apls = (from e in db.Applicant where e.DataStatus != 0 select e).ToList();
 
             if (!string.IsNullOrEmpty(filter) || !string.IsNullOrWhiteSpace(filter))
             {
-                emps = (from i in emps
+                apls = (from i in apls
                         where i.FullName.Contains(filter) ||
                                 i.Role.Name.Contains(filter) ||
                                 i.Role.Division.Contains(filter) ||
@@ -48,11 +48,11 @@ namespace HRIS.Controllers
 
             if (order != null)
             {
-                emps = EmployeeController.orderBy(emps, order);
+                apls = ApplicantController.orderBy(apls, order);
             }
 
             if (status.HasValue)
-                emps = (from e in emps where e.Role.Status == status select e).ToList();
+                apls = (from e in apls where e.Role.Status == status select e).ToList();
 
             ViewBag.order = order;
             ViewBag.filter = filter;
@@ -62,11 +62,11 @@ namespace HRIS.Controllers
             if (perpage.HasValue)
                 _perPage = perpage.Value;
 
-            var pager = new Pager(emps.Count(), page, _perPage);
+            var pager = new Pager(apls.Count(), page, _perPage);
 
-            var viewModel = new IndexViewModel
+            var viewModel = new ApplicantController.ApplicantPager
             {
-                Items = emps.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+                Items = apls.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
                 Pager = pager
             };
 
@@ -76,12 +76,12 @@ namespace HRIS.Controllers
             return Download(viewModel.Items.ToList());
         }
 
-        public FileResult Download(List<Employee> emps)
+        public FileResult Download(List<Applicant> apls)
         {
             var sb = new StringBuilder();
-            var nameProp = typeof(Employee).GetProperties();
+            var nameProp = typeof(Applicant).GetProperties();
 
-            foreach(var e in emps)
+            foreach (var e in apls)
             {
                 sb.AppendLine(
                     e.Id + "," +
@@ -106,7 +106,7 @@ namespace HRIS.Controllers
                     );
             }
 
-            return File(new UTF8Encoding().GetBytes(sb.ToString()), "text/csv", "employee.csv");
+            return File(new UTF8Encoding().GetBytes(sb.ToString()), "text/csv", "Applicant.csv");
         }
 
         public IActionResult Import([FromForm(Name = "files")] IFormFile files)
@@ -141,7 +141,7 @@ namespace HRIS.Controllers
                         Description = singleData[17]
                     };
 
-                    var toAdd = new Employee()
+                    var toAdd = new Applicant()
                     {
                         NIK = singleData[0],
                         FullName = singleData[1],
@@ -158,12 +158,12 @@ namespace HRIS.Controllers
                     var raw = JsonConvert.SerializeObject(toAdd, Formatting.Indented);
                     Console.WriteLine(raw);
 
-                    db.Employee.Add(toAdd);
+                    db.Applicant.Add(toAdd);
                 }
 
                 db.SaveChanges();
 
-                return RedirectToAction("Show", "Employee");
+                return RedirectToAction("Show", "Applicant");
             }
             catch (System.Exception e)
             {

@@ -21,6 +21,7 @@ namespace HRIS.Models
         [JsonIgnore]
         public string _role { get; set; }
         public string Photo { get; set; }
+        public string CV { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime EditedAt { get; set; }
         public DateTime DeletedAt { get; set; }

@@ -76,27 +76,27 @@ Employee Status
                 @if (Model.Pager.CurrentPage > 1)
                 {
                     <li>
-                        <a href="~/employee/show?&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order">First</a>
+                        <a href="~/applicant/show?&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order">First</a>
                     </li>
                     <li>
-                        <a href="~/employee/show?page=@(Model.Pager.CurrentPage-1)&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order">Previous</a>
+                        <a href="~/applicant/show?page=@(Model.Pager.CurrentPage-1)&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order">Previous</a>
                     </li>
                 }
 
                 @for (var p = Model.Pager.StartPage; p <= Model.Pager.EndPage; p++)
                 {
                     <li class="@(p==Model.Pager.CurrentPage ? "active" :"")">
-                        <a href="~/employee/show?page=@p&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">@p</a>
+                        <a href="~/applicant/show?page=@p&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">@p</a>
                     </li>
                 }
 
                 @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
                 {
                     <li>
-                        <a href="~/employee/show?page=@(Model.Pager.CurrentPage + 1)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">Next</a>
+                        <a href="~/applicant/show?page=@(Model.Pager.CurrentPage + 1)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">Next</a>
                     </li>
                     <li>
-                        <a href="~/employee/show?page=@(Model.Pager.TotalPages)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">Last</a>
+                        <a href="~/applicant/show?page=@(Model.Pager.TotalPages)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">Last</a>
                     </li>
                 }
             </ul>
@@ -118,7 +118,7 @@ Employee Status
             window.location.href = 'https://localhost:5001/applicant/edit/' + id;
         }
 
-        function Download(url='https://localhost:5001/applicant/GenereateAllEmployee') {
+        function Download(url='https://localhost:5001/applicantIO/GenereateAllApplicant') {
            fetch(url)
           .then(resp => resp.blob())
           .then(blob => {
@@ -138,7 +138,7 @@ Employee Status
 
         function DownloadDisplayed() {
             var filter = 'page=@(Model.Pager.CurrentPage)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage';
-            var url = 'https://localhost:5001/employeeIO/partialDownload?' + filter;
+            var url = 'https://localhost:5001/applicantIO/partialDownload?' + filter;
             console.log(url);
             Download(url);
         }

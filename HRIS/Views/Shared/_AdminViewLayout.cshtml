@@ -31,7 +31,15 @@
                         <a class="text-white hover:text-blue-800" asp-controller="Applicant" asp-action="Index">APPLICANTS</a>
                     </li>
                     <li class="mr-6">
-                        <a class="text-white hover:text-blue-800" href="#">LEAVE REQUEST</a>
+                        <div class="dropdown">
+                            <a class="text-white hover:text-blue-800 dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                LEAVE REQUEST
+                            </a>
+                            <div id="dropdown-notif" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                
+                                <a class="dropdown-item" href="#">See All</a>
+                            </div>
+                        </div>
                     </li>
                     <li class="mr-6">
                         <a class="text-white hover:text-blue-800" href="#">BROADCAST</a>
@@ -57,11 +65,46 @@
     </div>
 
     <footer class="border-top footer text-muted">
-
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        console.log("starting . . .");
+        //fungsi web socket
+        let userId = 0;
+
+        let connection = new signalR.HubConnectionBuilder().withUrl("/notif").build();
+
+        connection.start().then(function () {
+            console.log("Socket : SignalR started");
+            let userId = 'hr1@admin.com';
+            connection.invoke("bindConId", userId).catch(err => {
+                return console.log(err.toString());
+            });
+
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        connection.on("GotMessage", function (msg) {
+            console.log(msg);
+            var dd = '<a class="dropdown-item" href="#">[' + msg.Subject + ']' + msg.UserId + '</a>';
+            $('#dropdown-notif').append(dd);
+        });
+
+        $(window).bind('beforeunload', function () {
+            connection.invoke("removeConId", userId.toString()).catch(err => {
+                return console.log(err.toString());
+            });
+        });
+    });
+</script>
 </html>
+
