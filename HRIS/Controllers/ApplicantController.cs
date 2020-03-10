@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 using HRIS.Models;
 using HRIS.Data;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace HRIS.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class EmployeeController : Controller
+    public class ApplicantController : Controller
     {
         private AppDbContext db;
 
 
-        public EmployeeController(AppDbContext db)
+        public ApplicantController(AppDbContext db)
         {
             this.db = db;
         }
@@ -32,19 +30,20 @@ namespace HRIS.Controllers
         }
 
         [HttpGet("show")]
-        public IActionResult Show(int ? perpage, int ? page, int ? order, string filter, int ? status)
+        public IActionResult Show(int? perpage, int? page, int? order, string filter, int? status)
         {
             ViewData["filters"] = new { perpage, page, order, filter, status };
 
-            var emps = (from e in db.Employee where e.DataStatus != 0 select e).ToList();
+            var emps = (from e in db.Applicant where e.DataStatus != 0 select e).ToList();
 
             if (!string.IsNullOrEmpty(filter) || !string.IsNullOrWhiteSpace(filter))
             {
-                emps = (from i in emps where    i.FullName.Contains(filter) || 
-                                               i.Role.Name.Contains(filter) ||
-                                               i.Role.Division.Contains(filter) ||
-                                               i.Role.SubDivision.Contains(filter)
-                                               select i).ToList();
+                emps = (from i in emps
+                        where i.FullName.Contains(filter) ||
+                                i.Role.Name.Contains(filter) ||
+                                i.Role.Division.Contains(filter) ||
+                                i.Role.SubDivision.Contains(filter)
+                        select i).ToList();
             }
 
             if (order != null)
@@ -65,44 +64,45 @@ namespace HRIS.Controllers
 
             var pager = new Pager(emps.Count(), page, _perPage);
 
-            var viewModel = new IndexViewModel
+            var viewModel = new ApplicantPager
             {
                 Items = emps.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
                 Pager = pager
             };
 
 
-            //ViewData["employees"] = emps.ToList<Employee>();
-            ViewData["employees"] = viewModel;
+            ViewData["Applicants"] = emps.ToList<Applicant>();
+            
 
             return View(viewModel);
         }
 
 
+
         [HttpGet("add")]
-        public IActionResult AddEmployee()
+        public IActionResult AddApplicant()
         {
-            //return add employee page
+            //return add Applicant page
             return View();
         }
 
         [HttpGet("edit/{id}")]
         public IActionResult Edit(string id)
         {
-            var emp = db.Employee.Find(Guid.Parse(id));
+            var emp = db.Applicant.Find(Guid.Parse(id));
 
             ViewData["editData"] = emp;
 
-            return View("AddEmployee");
+            return View("AddApplicant");
         }
 
         [HttpPost("submit")]
-        public IActionResult AddEmpoyee(Employee emp)
+        public IActionResult AddEmpoyee(Applicant emp)
         {
-            //nanti ditambah validasi employee data
+            //nanti ditambah validasi Applicant data
             emp.CreatedAt = DateTime.Now;
             emp.DataStatus = 1;
-            db.Employee.Add(emp);
+            db.Applicant.Add(emp);
             db.SaveChanges();
 
             return Ok(emp);
@@ -131,23 +131,23 @@ namespace HRIS.Controllers
         [HttpGet("Detail/{id}")]
         public IActionResult Detail(string id)
         {
-            var emp = db.Employee.Find(Guid.Parse(id));
-            ViewData["employee"] = emp;
+            var emp = db.Applicant.Find(Guid.Parse(id));
+            ViewData["Applicant"] = emp;
 
             //return View();
             return Ok(emp);
         }
 
         [HttpPost("Update")]
-        public IActionResult Update(Employee emp)
+        public IActionResult Update(Applicant emp)
         {
             // validasi data
             emp.DataStatus = 1;
             //validasi data
-            var _emp = db.Employee.Find(emp.Id);
-            var propName = typeof(Employee).GetProperties();
+            var _emp = db.Applicant.Find(emp.Id);
+            var propName = typeof(Applicant).GetProperties();
 
-            foreach(var n in propName)
+            foreach (var n in propName)
             {
                 Console.WriteLine("set : {0}", n.ToString());
                 var val = n.GetValue(emp, null);
@@ -164,7 +164,7 @@ namespace HRIS.Controllers
         [HttpGet("Remove/{id}")]
         public IActionResult Remove(string id)
         {
-            var _emp = db.Employee.Find(Guid.Parse(id));
+            var _emp = db.Applicant.Find(Guid.Parse(id));
 
             _emp.DeletedAt = DateTime.Now;
             _emp.DataStatus = 0;
@@ -176,7 +176,7 @@ namespace HRIS.Controllers
 
 
 
-        public static List<Employee> orderBy(List<Employee> emps, int? order)
+        public static List<Applicant> orderBy(List<Applicant> emps, int? order)
         {
             switch (order)
             {
@@ -206,6 +206,11 @@ namespace HRIS.Controllers
             }
 
             return emps;
+        }
+        public class ApplicantPager
+        {
+            public IEnumerable<Applicant> Items { get; set; }
+            public Pager Pager { get; set; }
         }
     }
 }

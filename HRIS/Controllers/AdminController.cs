@@ -33,7 +33,7 @@ namespace HRIS.Controllers
         {
             var lAdmin = validateLoggedInAdmin();
             if (lAdmin != null)
-                return Ok(lAdmin);
+                return RedirectToAction("Index", "Dashboard");
 
             else
                 return View();

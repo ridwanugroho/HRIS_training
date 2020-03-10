@@ -1,10 +1,9 @@
-﻿@model HRIS.Models.IndexViewModel
+﻿@model HRIS.Controllers.ApplicantController.ApplicantPager
 
 @{
     ViewData["Title"] = "Show";
     Layout = "_AdminViewLayout";
-    //var emps = ViewData["employees"] as List<HRIS.Models.Employee>;
-    var emps = ViewData["employees"] as IndexViewModel;
+    var applicant = ViewData["Applicants"] as List<Applicant>;
     var filter = ViewData["filters"];
 }
 
@@ -19,16 +18,16 @@
                 <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
             </form>
         </div>
-        <button onclick="javascript: window.location.href = '/Employee/Add'" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Employee</button>
+        <button onclick="javascript: window.location.href = '/Applicant/Add'" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Applicant</button>
     </div>
 </div>
 
 <br />
 Employee Status
 <select id="status-sel">
-    <option value="1">Permanent</option>
-    <option value="2">Contract</option>
-    <option value="3">Probation</option>
+    <option value="1">Unprocessed</option>
+    <option value="2">Sc. Psychotest</option>
+    <option value="3">Sc. Interview</option>
 </select>
 <button onclick="javascript: displayByStatus()" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Set</button>
 
@@ -44,22 +43,22 @@ Employee Status
         </thead>
         <tbody>
             @{ var i = 1;}
-            @foreach(var e in emps.Items)
+            @foreach(var a in applicant)
             {
                 <tr>
                     <td class="border px-4 py-2">@i</td>
                     <td class="border px-4 py-2">
                         <div class="h-10 w-10">
-                            <img src="~/@e.Photo" />
+                            <img src="~/@a.Photo" />
                         </div>
                         <div>
-                            @e.FullName
+                            @a.FullName
                         </div>
                     </td>
-                    <td class="border px-4 py-2">@e.Role.Name</td>
+                    <td class="border px-4 py-2">@a.Role.Name</td>
                     <td class="border px-4 py-2">
                         <button class="btn">Message</button>
-                        <button id="u-@e.Id" class="btn" onclick="javascript: Update(this)">Update</button>
+                        <button id="u-@a.Id" class="btn" onclick="javascript: Update(this)">Update</button>
                         <button class="btn">Options</button>
                     </td>
                 </tr>
@@ -116,10 +115,10 @@ Employee Status
         function Update(ID) {
             var id = ID.id.substring(2, ID.id.length);
 
-            window.location.href = 'https://localhost:5001/employee/edit/' + id;
+            window.location.href = 'https://localhost:5001/applicant/edit/' + id;
         }
 
-        function Download(url='https://localhost:5001/Employee/GenereateAllEmployee') {
+        function Download(url='https://localhost:5001/applicant/GenereateAllEmployee') {
            fetch(url)
           .then(resp => resp.blob())
           .then(blob => {
@@ -147,7 +146,7 @@ Employee Status
         function displayByStatus() {
             var status = $('#status-sel').val();
 
-            var url = 'https://localhost:5001/employee/show?status=' + status;
+            var url = 'https://localhost:5001/applicant/show?status=' + status;
 
             window.location.href = url;
         }
@@ -157,7 +156,7 @@ Employee Status
         var order = '@ViewBag.order';
         var filter = '@ViewBag.filter';
         var perPage = document.getElementById("item-per-page").value;
-        url = "https://localhost:5001/Employee/show?perpage=";
+        url = "https://localhost:5001/applicant/show?perpage=";
         url += perPage + "&filter=" + filter + "&order=" + order;
         window.location.href = url;
     }

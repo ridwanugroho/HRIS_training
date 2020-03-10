@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
+
 
 namespace HRIS.Models
 {
-    public class Employee
+    public class Applicant
     {
         public Guid Id { get; set; }
         public string NIK { get; set; }
@@ -29,7 +30,7 @@ namespace HRIS.Models
         public string _address { get; set; }
 
         [NotMapped]
-        public  Address Address
+        public Address Address
         {
             get { return _address == null ? null : JsonConvert.DeserializeObject<Address>(_address); }
             set { _address = JsonConvert.SerializeObject(value); }
@@ -41,6 +42,5 @@ namespace HRIS.Models
             get { return _role == null ? null : JsonConvert.DeserializeObject<Role>(_role); }
             set { _role = JsonConvert.SerializeObject(value); }
         }
-        
     }
 }

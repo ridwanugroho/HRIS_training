@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_AdminViewLayout";
+    var attendances = ViewData["attendances"] as List<Employee>;
+}
+
+    <table class="table-auto">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">No</th>
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var i = 1;}
+            @foreach (var e in attendances)
+            {
+                <tr>
+                    <td class="border px-4 py-2">@i</td>
+                    <td class="border px-4 py-2">
+                        <button class="btn" onclick="javascript: window.location.href='https://localhost:5001/attendance/detail?id=@e.Id'">
+                            @e.FullName
+                        </button>
+                    </td>
+                    <td class="border px-4 py-2">Cek</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+

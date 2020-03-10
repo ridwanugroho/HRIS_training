@@ -13,7 +13,8 @@ namespace HRIS.Data
     {
         public DbSet<Employee> Employee { get; set; }
         public DbSet<HRAdmin> HRAdmin { get; set; }
-
+        public DbSet<Attendance> Attendance { get; set; }
+        public DbSet<Applicant> Applicant { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {

@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "_AdminViewLayout";
+    var detail = ViewData["detail"] as List<Attendance>;
+}
+
+    <div class="container">
+        <span class="font-bold my-10">@ViewData["attnName"].ToString().ToUpper()</span>
+
+        <table class="table-auto">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2">No</th>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Clock In</th>
+                    <th class="px-4 py-2">Clock Out</th>
+                    <th class="px-4 py-2">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ var i = 1;}
+                @foreach (var a in detail)
+                {
+                    <tr>
+                        <td class="border px-4 py-2">@i</td>
+                        <td class="border px-4 py-2">@a.CreatedAt.ToString("yyyy/MM/dd")</td>
+                        <td class="border px-4 py-2">@String.Format("{0:T}", a.ClockIn)</td>
+                        <td class="border px-4 py-2">@String.Format("{0:T}", a.ClockOut)</td>
+                        <td class="border px-4 py-2">@a.Status</td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
