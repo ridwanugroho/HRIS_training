@@ -14,5 +14,6 @@ namespace HRIS.Models
         public string Message { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime OpenedAt { get; set; }
+        public string ReadStatus { get; set; }
     }
 }

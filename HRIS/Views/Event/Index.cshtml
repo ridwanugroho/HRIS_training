@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_AdminViewLayout";
+    var events = ViewData["events"] as List<Event>;
+}
+
+<div class="my-50">
+    <div id="emp-toolbar" class="my-3">
+        <a class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" asp-action="Create" asp-controller="Event">Add Event</a>
+    </div>
+</div>
+
+<div>
+    <table class="table-auto">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">No</th>
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Start Date</th>
+                <th class="px-4 py-2">End Date</th>
+                <th class="px-4 py-2">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var i = 1;}
+            @foreach (var a in events)
+            {
+                <tr>
+                    <td class="border px-4 py-2">@i</td>
+                    <td class="border px-4 py-2">@a.Title</td>
+                    <td class="border px-4 py-2">@a.StartDate</td>
+                    <td class="border px-4 py-2">@a.EndDate</td>
+                    <td class="border px-4 py-2">
+                        <button class="btn">Done</button>
+                        <button class="btn">Edit</button>
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

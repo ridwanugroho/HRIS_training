@@ -17,6 +17,7 @@
             <form asp-action="Import" asp-controller="EmployeeIO" enctype="multipart/form-data">
                 <input type="file" name="files" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" placeholder="Import" />
                 <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
+                <button type="button" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadTemplate()">Download Template</button>
             </form>
         </div>
         <button onclick="javascript: window.location.href = '/Employee/Add'" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Employee</button>
@@ -142,6 +143,10 @@ Employee Status
             var url = 'https://localhost:5001/employeeIO/partialDownload?' + filter;
             console.log(url);
             Download(url);
+        }
+
+        function DownloadTemplate() {
+            Download('https://localhost:5001/employeeIO/downloadTemplate');
         }
 
         function displayByStatus() {

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <form action="https://localhost:5001/attendance/ClockIn" method="get">
+        <label>ID</label>
+        <input name="id" type="text" required>
+        <label>Due Date</label>
+        <input name="dueDate" type="datetime-local">
+        <label>Date input</label>
+        <input name="date" type="datetime-local">
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <form action="https://localhost:5001/EmpRequest/Index" method="GET">
+        <label>ID Sender</label>
+        <input name="sender"type="text" required><br>
+        <label>ID Rec</label>
+        <input name="to"type="text" required><br>
+        <label>Subject</label>
+        <input name="subject" type="text" required><br>
+        <label>Message</label>
+        <input id="msg" name="message" type="text" required><br>
+        <label>Start</label>
+        <input name="startDate" type="date">
+        <label>End</label>
+        <input name="endDate" type="date">
+
+        <button id="send-msg-btn" type="submit">Send</button>
+    </form>
+
+
+    <script src="js/site.js" asp-append-version="true"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+</body>
+
+<script type="text/javascript">
+
+    
+</script>
+</html>

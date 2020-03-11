@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -18,7 +19,7 @@ using Newtonsoft.Json;
 using HRIS.Models;
 using HRIS.Controllers;
 using HRIS.Data;
-using System.Net;
+using HRIS.Scheduler;
 
 namespace HRIS
 {
@@ -73,6 +74,8 @@ namespace HRIS
             });
 
             services.AddCors();
+
+            services.AddHostedService<DailyBroadcast>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

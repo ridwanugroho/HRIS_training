@@ -78,7 +78,6 @@ namespace HRIS.Controllers
         }
 
 
-
         [HttpGet("add")]
         public IActionResult AddApplicant()
         {
@@ -97,15 +96,15 @@ namespace HRIS.Controllers
         }
 
         [HttpPost("submit")]
-        public IActionResult AddEmpoyee(Applicant emp)
+        public IActionResult AddEmpoyee(Applicant apl)
         {
             //nanti ditambah validasi Applicant data
-            emp.CreatedAt = DateTime.Now;
-            emp.DataStatus = 1;
-            db.Applicant.Add(emp);
+            apl.CreatedAt = DateTime.Now;
+            apl.DataStatus = 1;
+            db.Applicant.Add(apl);
             db.SaveChanges();
 
-            return Ok(emp);
+            return Ok(apl);
         }
 
         [HttpPost("UploadPhoto")]

@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "_AdminViewLayout";
+    var request = ViewData["req"] as EmployeeRequest;
+}
+
+<div>
+    DETAIL REQUEST <br />
+    From : @request.From <br />
+    Subject : @request.Subject <br />
+    Message : @request.Message<br />
+    Request Date : @request.CreatedAt.ToString("yyyy/MM/dd")<br />
+    Approval status : @request.ApprovalStatus
+</div>
+
+<input id="notes" placeholder="Put notes here" />
+<button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: Approve()">Approve</button>
+<button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: Reject()">Reject</button>
+
+@section Scripts
+{
+<script type="text/javascript">
+    function Approve() {
+        var id = '@request.Id';
+        var notes = $('#notes').val();
+
+        $.get(
+            'https://localhost:5001/EmpRequest/Approve?id=' + id + '&notes=' + notes,
+            function (data) {
+                alert("Confirmation sent");
+                window.location.href = 'https://localhost:5001/EmpRequest/AllRequest';
+            }
+        );
+    }
+
+    function Reject() {
+        var id = '@request.Id';
+        var notes = $('#notes').val();
+
+        $.get(
+            'https://localhost:5001/EmpRequest/Reject?id=' + id + '&notes=' + notes,
+            function (data) {
+                alert("Confirmation sent");
+                window.location.href = 'https://localhost:5001/EmpRequest/AllRequest';
+            }
+        );
+    }
+</script>
+}

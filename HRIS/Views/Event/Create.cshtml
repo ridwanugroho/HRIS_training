@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+    Layout = "_AdminViewLayout";
+}
+
+    <form asp-action="CreateEvent" asp-controller="Event" method="post">
+        <label for="title">Event Name</label>
+        <input required type="text" id="title" name="title" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <label for="detail">Detail</label>
+        <input required type="text" id="detail" name="detail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <label for="startDate">Start Date</label>
+        <input required type="datetime-local" id="startDate" name="startDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <label for="endDate">End Date</label>
+        <input required type="datetime-local" id="endDate" name="endDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Event</button>
+    </form>
+
+

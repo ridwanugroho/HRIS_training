@@ -33,16 +33,19 @@
                     <li class="mr-6">
                         <div class="dropdown">
                             <a class="text-white hover:text-blue-800 dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                LEAVE REQUEST
+                                LEAVE REQUEST[<span id="unread-cnt"></span>]
                             </a>
                             <div id="dropdown-notif" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                
-                                <a class="dropdown-item" href="#">See All</a>
+
+                                <a class="dropdown-item" asp-controller="EmpRequest" asp-action="AllRequest">See All</a>
                             </div>
                         </div>
                     </li>
                     <li class="mr-6">
-                        <a class="text-white hover:text-blue-800" href="#">BROADCAST</a>
+                        <a class="text-white hover:text-blue-800" asp-controller="Broadcast" asp-action="Index">BROADCAST</a>
+                    </li>
+                    <li class="mr-6">
+                        <a class="text-white hover:text-blue-800" asp-controller="Event" asp-action="Index">EVENT</a>
                     </li>
                 </ul>
             </div>
@@ -74,9 +77,33 @@
 </body>
 
 <script type="text/javascript">
+    var ID = '1';
 
     $(document).ready(function () {
         console.log("starting . . .");
+        console.log("getting unread notif");
+
+        $.ajax({
+            url: 'https://localhost:5001/EmpRequest/GetUnreadNotif/'+ID,
+            type: 'get',
+            dataType: 'json'
+
+        }).done(function(msg){
+            console.log(msg);
+            $('#unread-cnt').html(msg.length);
+
+            for (i = 0; i < msg.length; i++) {
+                var detailUrl = 'https://localhost:5001/EmpRequest/Detail?notifId=' + msg[i].id;
+                var dd = '<a class="dropdown-item" href="'+ detailUrl +'">[' + msg[i].subject + ']' + msg[i].sender + '</a>';
+                $('#dropdown-notif').append(dd);
+
+            }
+
+        }).catch(function(err){
+            console.log('error getting unread : ' + err);
+        });
+
+
         //fungsi web socket
         let userId = 0;
 
@@ -95,8 +122,13 @@
 
         connection.on("GotMessage", function (msg) {
             console.log(msg);
-            var dd = '<a class="dropdown-item" href="#">[' + msg.Subject + ']' + msg.UserId + '</a>';
-            $('#dropdown-notif').append(dd);
+            var unread = parseInt($('#unread-cnt').html()) + 1;
+            
+            $('#unread-cnt').html(unread);
+
+                var detailUrl = 'https://localhost:5001/EmpRequest/Detail?notifId=' + msg.id;
+                var dd = '<a class="dropdown-item" href="'+ detailUrl +'">[' + msg.subject + ']' + msg.sender + '</a>';
+                $('#dropdown-notif').append(dd);
         });
 
         $(window).bind('beforeunload', function () {

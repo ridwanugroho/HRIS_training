@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+<div class="container">
+    <div id="new-wmp-title">
+        @if (editStatus) { 
+            <p>Edit Applicant</p>
+        }
+        else
+        {
+            <p>Add New Applicant</p>
+        }
+    </div>
+    <div>
+        <form action="javascript: uploadPhoto()" enctype="multipart/form-data">
+            <div id="img-preview">
+                <img id="img-prev-thumb" style="display:none" />
+            </div>
+            <label for="_Photo">Photo</label>
+            <input type="file" id="_Photo" name="_Photo" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" type="submit">Upload</button>
+        </form>
+        <form action="javascript: uploadCV()" enctype="multipart/form-data">
+            <label for="_CV">CV</label>
+            <input type="file" id="_CV" name="_CV" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" type="submit">Upload</button>
+        </form>
+        <form id="input-form" class="w-full max-w-lg" action="javascript: submit()">
+            <label for="NIK">Applicant Id</label>
+            <input required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="FullName">Full Name</label>
+            <input required type="text" id="FullName" name="FullName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Religion">Religion</label>
+            <input required type="text" id="Religion" name="Religion" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="DOB">Date of Birth</label>
+            <input required type="date" id="DOB" name="DOB" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Phone">Phone</label>
+            <input required type="text" id="Phone" name="Phone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+
+            <label for="Country">Country</label>
+            <input required type="text" id="Country" name="Country" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Province">Province</label>
+            <input required type="text" id="Province" name="Province" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="City">City</label>
+            <input required type="text" id="City" name="City" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Distric">Distric</label>
+            <input required type="text" id="Distric" name="Distric" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="SubDistric">SubDistric</label>
+            <input required type="text" id="SubDistric" name="SubDistric" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Street">Street</label>
+            <input required type="text" id="Street" name="Street" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+
+            <label for="Status">Applicant Status</label><br />
+            <select id="Status" name="Status" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
+                <option value="1">(1)Unprocessed</option>
+                <option value="2">(2)Sc. Psychotest</option>
+                <option value="3">(3)Sc. Interview</option>
+            </select><br />
+
+            <label for="JoinDate">Apply Date</label>
+            <input required type="date" id="JoinDate" name="JoinDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="RoleName">Position</label>
+            <input required type="text" id="RoleName" name="RoleName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Division">Division</label>
+            <input required type="text" id="Division" name="Division" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="SubDivision">SubDivision</label>
+            <input required type="text" id="SubDivision" name="SubDivision" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Level">Level</label>
+            <input required type="text" id="Level" name="Level" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Description">Description</label>
+            <input type="text" id="Description" name="Description" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+
+            <input type="text" id="Photo" name="Photo" hidden value="" />
+            <input type="text" id="CV" name="CV" hidden value="" />
+
+            <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" type="submit">Submit</button>
+        </form>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    var photoUrl = '';
+
+    function submit() {
+        var rawData = $('#input-form').serializeArray().reduce(function (obj, item) {
+            obj[item.name] = item.value;
+            return obj;
+        }, {});
+
+        console.log(rawData);
+
+        var dataToSend = {
+            Id: rawData.Id,
+            NIK: rawData.NIK,
+            FullName: rawData.FullName,
+            DOB: rawData.DOB,
+            Religion: rawData.Religion,
+            JoinDate: rawData.JoinDate,
+            Phone: rawData.Phone,
+            Photo: rawData.Photo,
+            Address: {
+                Country: rawData.Country,
+                Province: rawData.Province,
+                City: rawData.City,
+                Distric: rawData.Distric,
+                SubDistric: rawData.SubDistric,
+                Street:rawData.Street
+            },
+            Role: {
+                Status: rawData.Status,
+                Name: rawData.RoleName,
+                Division: rawData.Division,
+                SubDivision: rawData.SubDivision,
+                Level: rawData.Level,
+                Description: rawData.Description
+            }
+        }
+
+        console.log(JSON.stringify(dataToSend));
+        console.log('@editStatus');
+
+        var url = 'submit';
+
+        if ('@editStatus' == true) {
+            url = 'https://localhost:5001/applicant/update';
+            console.log("update...");
+        }
+
+       $.ajax({
+            url: url,
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+
+            success: function (data) {
+                console.log(data);
+
+                window.location.href = 'https://localhost:5001/applicant/show';
+            },
+
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.responseText);
+            }
+        });
+    }
+
+
+    function uploadPhoto() {
+        var fd = new FormData();
+        var files = $('#_Photo')[0].files[0];
+        fd.append('file', files);
+
+        $.ajax({
+            url: 'https://localhost:5001/applicant/uploadPhoto',
+            type: 'post',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(response){
+                if(response != 0){
+                    console.log(response);
+
+                    $('#Photo').val(response);
+                    photoUrl = response.responseText;
+
+                }else{
+                    alert('file not uploaded');
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function uploadPhoto() {
+        var fd = new FormData();
+        var files = $('#_CV')[0].files[0];
+        fd.append('file', files);
+
+        $.ajax({
+            url: 'https://localhost:5001/applicant/uploadCV',
+            type: 'post',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(response){
+                if(response != 0){
+                    console.log(response);
+
+                    $('#CV').val(response);
+                    photoUrl = response.responseText;
+
+                }else{
+                    alert('file not uploaded');
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function showPhoto() {
+        var reader = new FileReader();
+        $('#img-prev-thumb').show();
+        reader.onload = function (e) {
+            $('#img-prev-thumb').attr('src', e.target.result)
+                .width(200).height(200);
+        };
+
+        
+        reader.readAsDataURL($('#_Photo').files[0]);
+    }
+</script>
+</body>
+</html>

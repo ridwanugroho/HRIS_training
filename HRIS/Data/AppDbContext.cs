@@ -17,6 +17,7 @@ namespace HRIS.Data
         public DbSet<Applicant> Applicant { get; set; }
         public DbSet<NotificationLog> NotificationLog { get; set; }
         public DbSet<EmployeeRequest> EmployeeRequest { get; set; }
+        public DbSet<Event> Event { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {

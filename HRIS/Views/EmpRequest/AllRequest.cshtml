@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "AllRequest";
+    Layout = "_adminViewLayout";
+    var allRequests = ViewData["allReqs"] as List<EmployeeRequest>;
+}
+
+<table class="table-auto">
+    <thead>
+        <tr>
+            <th class="px-4 py-2">No</th>
+            <th class="px-4 py-2">From</th>
+            <th class="px-4 py-2">Subject</th>
+            <th class="px-4 py-2">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ var i = 1;}
+        @foreach (var r in allRequests)
+        {
+            <tr>
+                <td class="border px-4 py-2">@i</td>
+                <td class="border px-4 py-2">
+                    <button class="btn" onclick="javascript: window.location.href='https://localhost:5001/EmpRequest/detail?id=@r.Id'">
+                        @r.From
+                    </button>
+                </td>
+                <td class="border px-4 py-2">@r.Subject</td>
+                <td class="border px-4 py-2">@r.ApprovalStatus</td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>

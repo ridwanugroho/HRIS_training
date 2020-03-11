@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace HRIS.Controllers
             this.db = db;
         }
 
-        public async Task<IActionResult> Index(string sender, string to, string subject, string message)
+        public async Task<IActionResult> Index(string sender, string to, string subject, string message, DateTime startDate, DateTime endDate)
         {
             var _sender = (from e in db.Employee where e.NIK == sender select e).First();
             var _reciever = (from e in db.HRAdmin where e.Email == to select e).First();
@@ -34,60 +35,61 @@ namespace HRIS.Controllers
                 Message = message,
                 CreatedAt = DateTime.Now
             };
+                    
+            msg.Reciever = _reciever.Id.ToString();
+            msg.CreatedAt = DateTime.Now;
+
+            db.NotificationLog.Add(msg);
 
             foreach (var connectionId in ChatHub._connections.GetConnections(to))
                 await _hubContext.Clients.Client(connectionId).SendAsync("GotMessage", msg);
-
-
+            
             msg.Sender = _sender.Id.ToString();
-            msg.Reciever = _reciever.Id.ToString();
-
-            db.NotificationLog.Add(msg);
             db.SaveChanges();
+            
+            registerRequest(msg.Id.ToString(), sender, to, subject, message, startDate, endDate);
 
-            registerRequest(sender, to, subject, message);
-
-            return Ok("sepertinya terkirim");
+            return Ok("Permintaan anda berhasil dikirimkan");
         }
 
         public IActionResult GetUnreadNotif(string Id)
         {
-            return Ok();
+            var unread = (from n in db.NotificationLog where n.Reciever == Id && n.ReadStatus != "read" select n).ToList();
+
+            unread.ForEach(
+                x => x.Sender = db.Employee.Find(Guid.Parse(x.Sender)).FullName
+                );
+
+            return Ok(unread);
         }
 
-        public IActionResult SetReadStatus(string msgID)
+        public IActionResult Detail(string notifId, string Id)
         {
-            var _msg = db.NotificationLog.Find(Guid.Parse(msgID));
-            _msg.OpenedAt = DateTime.Now;
-            db.SaveChanges();
+            var req = new EmployeeRequest();
 
-            return Ok("read");
+            if (!string.IsNullOrEmpty(notifId))
+            {
+                req = (from r in db.EmployeeRequest where r.NotifId == notifId select r).First();
+                setReadStatus(notifId);
+            }
+
+            if (!string.IsNullOrEmpty(Id))
+            {
+                req = (from r in db.EmployeeRequest where r.Id == Guid.Parse(Id) select r).First();
+                setReadStatus(req.NotifId);
+            }
+
+            req.From = db.Employee.Find(Guid.Parse(req.From)).FullName;
+
+            ViewData["req"] = req;
+
+            return View();
         }
 
         public IActionResult AllRequest(int? perpage, int? page, int? order, string filter, int? status)
         {
-            var reqs = (from r in db.NotificationLog select r).ToList();
+            var reqs = (from r in db.EmployeeRequest select r).ToList();
 
-            if (!string.IsNullOrEmpty(filter) || !string.IsNullOrWhiteSpace(filter))
-            {
-                reqs = (from i in reqs
-                        where i.Message.Contains(filter) ||
-                                i.Subject.Contains(filter) ||
-                                i.Sender.Contains(filter)
-                        select i).ToList();
-            }
-
-            /*if (order != null)
-            {
-                reqs = orderBy(reqs, order);
-            }*/
-
-            //if (status.HasValue)
-            //    reqs = (from e in reqs where e.Role.Status == status.Value select e).ToList();
-
-            ViewBag.order = order;
-            ViewBag.filter = filter;
-            ViewBag.perPage = perpage;
 
             int _perPage = 5;
             if (perpage.HasValue)
@@ -101,21 +103,68 @@ namespace HRIS.Controllers
                 Pager = pager
             };
 
+            reqs.ForEach(
+                x => x.From = db.Employee.Find(Guid.Parse(x.From)).FullName
+                );
 
-            ViewData["Applicants"] = reqs.ToList<NotificationLog>();
+            ViewData["allReqs"] = reqs.ToList<EmployeeRequest>();
 
 
             return View(viewModel);
         }
 
-        private void registerRequest(string sender, string to, string subject, string message)
+        public IActionResult Approve(string Id, string notes)
+        {
+            var req = db.EmployeeRequest.Find(Guid.Parse(Id));
+            req.ApprovalStatus = 1;
+            req.Notes = notes;
+            db.SaveChanges();
+
+            var emp = db.Employee.Find(Guid.Parse(req.From));
+
+            var mailBody = $@"<h1>Dear {emp.FullName},</h1><br>
+                Permintaan {req.Subject} anda telah disetujui.<br>
+                <h3>Salam, HR.</h3>";
+
+            var sendThread = new Thread(() => MailController.sendMail("admin@tokoaneh.com", emp.Email,
+                                                                      "Request Confirmation", mailBody));
+            sendThread.Start();
+
+            return Ok(req);
+        }
+
+        public IActionResult Reject(string Id, string notes)
+        {
+            var req = db.EmployeeRequest.Find(Guid.Parse(Id));
+            req.ApprovalStatus = 2;
+            req.Notes = notes;
+            db.SaveChanges();
+
+            var emp = db.Employee.Find(Guid.Parse(req.From));
+
+            var mailBody = $@"<h1>Dear {emp.FullName},</h1><br>
+                Permintaan {req.Subject} anda tidak disetujui dengan alasan :<br>
+                {req.Notes}<br>
+                Silahkan melakuakn revisi dan ajukan kembali permohonan anda.<br>
+                <h3>Salam, HR.</h3>";
+
+            var sendThread = new Thread(() => MailController.sendMail("admin@tokoaneh.com", emp.Email,
+                                                                      "Request Confirmation", mailBody));
+            sendThread.Start();
+
+            return Ok(req);
+        }
+
+        private void registerRequest(string notifId, string sender, string to, string subject, string message, DateTime startDate, DateTime endDate)
         {
             var _req = new EmployeeRequest
             {
+                NotifId = notifId,
                 From = (from e in db.Employee where e.NIK == sender select e.Id.ToString()).First(),
                 To = (from e in db.HRAdmin where e.Email == to select e.Id.ToString()).First(),
                 Subject = subject,
                 Message = message,
+                DueDate = new DueDate { StartDate = startDate, EndDate = endDate},
                 ApprovalStatus = 0,
                 CreatedAt = DateTime.Now,
                 Notes = "-"
@@ -127,8 +176,16 @@ namespace HRIS.Controllers
 
         public class RequestPager
         {
-            public IEnumerable<NotificationLog> Items { get; set; }
+            public IEnumerable<EmployeeRequest> Items { get; set; }
             public Pager Pager { get; set; }
+        }
+
+        private void setReadStatus(string notifId)
+        {
+            var _msg = db.NotificationLog.Find(Guid.Parse(notifId));
+            _msg.OpenedAt = DateTime.Now;
+            _msg.ReadStatus = "read";
+            db.SaveChanges();
         }
     }
 }
