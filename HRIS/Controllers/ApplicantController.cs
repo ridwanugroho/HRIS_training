@@ -8,6 +8,7 @@ using HRIS.Models;
 using HRIS.Data;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRIS.Controllers
 {
@@ -23,17 +24,17 @@ namespace HRIS.Controllers
             this.db = db;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Index()
         {
             return RedirectToAction("Show");
         }
 
+        [Authorize]
         [HttpGet("show")]
         public IActionResult Show(int? perpage, int? page, int? order, string filter, int? status)
         {
-            ViewData["filters"] = new { perpage, page, order, filter, status };
-
             var apls = (from e in db.Applicant where e.DataStatus != 0 select e).ToList();
 
             if (!string.IsNullOrEmpty(filter) || !string.IsNullOrWhiteSpace(filter))
@@ -54,6 +55,8 @@ namespace HRIS.Controllers
             if (status.HasValue)
                 apls = (from e in apls where e.Role.Status == status.Value select e).ToList();
 
+            ViewBag.page = page;
+            ViewBag.status = status;
             ViewBag.order = order;
             ViewBag.filter = filter;
             ViewBag.perPage = perpage;
@@ -77,7 +80,6 @@ namespace HRIS.Controllers
             return View(viewModel);
         }
 
-
         [HttpGet("add")]
         public IActionResult AddApplicant()
         {
@@ -85,6 +87,7 @@ namespace HRIS.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpGet("edit/{id}")]
         public IActionResult Edit(string id)
         {
@@ -96,7 +99,7 @@ namespace HRIS.Controllers
         }
 
         [HttpPost("submit")]
-        public IActionResult AddEmpoyee(Applicant apl)
+        public IActionResult AddApplicant(Applicant apl)
         {
             //nanti ditambah validasi Applicant data
             apl.CreatedAt = DateTime.Now;
@@ -182,9 +185,23 @@ namespace HRIS.Controllers
             //return Ok(_emp);
         }
 
-        [HttpGet("Remove/{id}")]
-        public IActionResult Remove(string id)
+        [HttpGet("RemoveApplicant/{id}")]
+        public IActionResult RemoveApplicant(string id)
         {
+            var _emp = db.Applicant.Find(Guid.Parse(id));
+
+            ViewData["remove"] = _emp;
+
+            return View();
+        }
+
+
+        [HttpGet("Remove")]
+        public IActionResult Remove(string id, string notes)
+        {
+            Console.WriteLine(id);
+            Console.WriteLine(notes);
+
             var _emp = db.Applicant.Find(Guid.Parse(id));
 
             _emp.DeletedAt = DateTime.Now;
@@ -192,10 +209,38 @@ namespace HRIS.Controllers
 
             db.SaveChanges();
 
-            return Ok(_emp);
+            return RedirectToAction("Show");
         }
 
+        [HttpPost("setAsEmployee")]
+        public IActionResult SetAsEmployee(Applicant apl)
+        {
+            var emp = new Employee();
 
+            emp.NIK = apl.NIK;
+            emp.FullName = apl.FullName;
+            emp.DOB = apl.DOB;
+            emp.Gender = apl.Gender;
+            emp.Religion = apl.Religion;
+            emp.JoinDate = DateTime.Now;
+            emp.Phone = apl.Phone;
+            emp.Email = apl.Email;
+            emp.Role = apl.Role;
+            emp.Photo = apl.Photo;
+            emp.CreatedAt = DateTime.Now;
+            emp.DataStatus = 1;
+            emp.Address = apl.Address;
+
+            //delete cv file
+
+            db.Employee.Add(emp);
+
+            var _apl = db.Applicant.Find(apl.Id);
+            _apl.DataStatus = 0;
+
+            db.SaveChanges();
+            return Ok(emp);
+        }
 
         public static List<Applicant> orderBy(List<Applicant> apls, int? order)
         {
@@ -228,6 +273,7 @@ namespace HRIS.Controllers
 
             return apls;
         }
+
         public class ApplicantPager
         {
             public IEnumerable<Applicant> Items { get; set; }

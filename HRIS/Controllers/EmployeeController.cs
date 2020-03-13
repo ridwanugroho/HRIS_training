@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using HRIS.Models;
 using HRIS.Data;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRIS.Controllers
 {
@@ -25,16 +26,17 @@ namespace HRIS.Controllers
             this.db = db;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Index()
         {
             return RedirectToAction("Show");
         }
 
+        [Authorize]
         [HttpGet("show")]
         public IActionResult Show(int ? perpage, int ? page, int ? order, string filter, int ? status)
         {
-            ViewData["filters"] = new { perpage, page, order, filter, status };
 
             var emps = (from e in db.Employee where e.DataStatus != 0 select e).ToList();
 
@@ -55,6 +57,8 @@ namespace HRIS.Controllers
             if (status.HasValue)
                 emps = (from e in emps where e.Role.Status == status select e).ToList();
 
+            ViewBag.page = page;
+            ViewBag.status = status;
             ViewBag.order = order;
             ViewBag.filter = filter;
             ViewBag.perPage = perpage;
@@ -78,7 +82,7 @@ namespace HRIS.Controllers
             return View(viewModel);
         }
 
-
+        [Authorize]
         [HttpGet("add")]
         public IActionResult AddEmployee()
         {
@@ -86,6 +90,7 @@ namespace HRIS.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpGet("edit/{id}")]
         public IActionResult Edit(string id)
         {
@@ -96,6 +101,7 @@ namespace HRIS.Controllers
             return View("AddEmployee");
         }
 
+        [Authorize]
         [HttpPost("submit")]
         public IActionResult AddEmpoyee(Employee emp)
         {
@@ -108,6 +114,7 @@ namespace HRIS.Controllers
             return Ok(emp);
         }
 
+        [Authorize]
         [HttpPost("UploadPhoto")]
         public async Task<IActionResult> UploadPhoto([FromForm(Name = "file")] IFormFile files)
         {
@@ -128,6 +135,7 @@ namespace HRIS.Controllers
             return Ok(filename.Substring(8));
         }
 
+        [Authorize]
         [HttpGet("Detail/{id}")]
         public IActionResult Detail(string id)
         {
@@ -138,6 +146,7 @@ namespace HRIS.Controllers
             return Ok(emp);
         }
 
+        [Authorize]
         [HttpPost("Update")]
         public IActionResult Update(Employee emp)
         {
@@ -147,7 +156,9 @@ namespace HRIS.Controllers
             var _emp = db.Employee.Find(emp.Id);
             var propName = typeof(Employee).GetProperties();
 
-            foreach(var n in propName)
+            emp.CreatedAt = _emp.CreatedAt;
+
+            foreach (var n in propName)
             {
                 Console.WriteLine("set : {0}", n.ToString());
                 var val = n.GetValue(emp, null);
@@ -161,19 +172,46 @@ namespace HRIS.Controllers
             //return Ok(_emp);
         }
 
-        [HttpGet("Remove/{id}")]
-        public IActionResult Remove(string id)
+        [Authorize]
+        [HttpGet("sendMessage")]
+        public IActionResult SendMessage(string id, string message)
+        {
+            var addr = db.Employee.Find(Guid.Parse(id.Substring(2))).Email;
+
+            MailController.sendMail("admin@tokoaneh.com", addr, "HR-Message", message);
+
+            return RedirectToAction("Show");
+        }
+
+        [Authorize]
+        [HttpGet("RemoveEmployee/{id}")]
+        public IActionResult RemoveEmployee(string id)
         {
             var _emp = db.Employee.Find(Guid.Parse(id));
 
+            ViewData["remove"] = _emp;
+
+            return View();
+        }
+
+        [Authorize]
+        [HttpGet("Remove")]
+        public IActionResult Remove(string id, int status, string notes)
+        {
+            Console.WriteLine(id);
+            Console.WriteLine(status);
+            Console.WriteLine(notes);
+
+            var _emp = db.Employee.Find(Guid.Parse(id));
+
+            _emp.Role.Status = status;
             _emp.DeletedAt = DateTime.Now;
             _emp.DataStatus = 0;
 
             db.SaveChanges();
 
-            return Ok(_emp);
+            return RedirectToAction("Show");
         }
-
 
 
         public static List<Employee> orderBy(List<Employee> emps, int? order)

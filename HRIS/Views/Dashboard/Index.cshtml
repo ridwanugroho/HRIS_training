@@ -2,6 +2,88 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "_AdminViewLAyout";
+    var viewData = ViewData["dashboardView"] as HRIS.Controllers.DashboardViewData;
 }
 
-halo ini dashboard
+    <div class="my-20 flex">
+        <div class="max-w-sm rounded overflow-hidden shadow-lg flex-1 m-10">
+            <div class="bg-blue-200 text-center p-4">
+                <span class="font-bold text-2xl">Total Employee</span>
+            </div>
+            <div class="px-6 py-4 text-center">
+                <span class="text-6xl">@viewData.TotalEMployee</span>
+            </div>
+            <div class="px-6 py-4 text-center">
+                <span>Male:@viewData.MaleEmployee/Female:@viewData.FemaleEmployee</span>
+            </div>
+        </div>
+        <div class="max-w-sm rounded overflow-hidden shadow-lg flex-1 m-10">
+            <div class="bg-blue-200 text-center p-4">
+                <span class="font-bold text-2xl">Out Today</span>
+            </div>
+            <div class="px-6 py-4 text-center">
+                @foreach (var e in viewData.Absent)
+                {
+                    <span class="text-2xl my-3">@e.FullName</span><br />
+                }
+            </div>
+        </div>
+        <div class="max-w-sm rounded overflow-hidden shadow-lg flex-1 m-10">
+            <div class="bg-blue-200 text-center p-4">
+                <span class="font-bold text-2xl">Today's Present</span>
+            </div>
+            <div class="px-6 py-4 text-center">
+                <span class="text-6xl">@viewData.TodayPresent / @viewData.TotalEMployee</span>
+            </div>
+        </div>
+    </div>
+    <div class="my-20 flex">
+        <div class="max-w-sm rounded overflow-hidden shadow-lg flex-1 m-10">
+            <div class="bg-blue-200 text-center p-4">
+                <span class="font-bold text-2xl">Upcoming Events</span>
+            </div>
+            <div class="px-6 py-4 text-center">
+                <table class="table-auto">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2">Date</th>
+                            <th class="px-4 py-2">Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in viewData.UpcomingEvent)
+                        {
+                            <tr>
+                                <td class="border px-4 py-2">@e.StartDate.ToString("M")</td>
+                                <td class="border px-4 py-2">@e.Title</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="max-w-sm rounded overflow-hidden shadow-lg flex-1 m-10">
+            <div class="bg-blue-200 text-center p-4">
+                <span class="font-bold text-2xl">Applicants</span>
+            </div>
+            <div class="px-6 py-4 text-center">
+                <table class="table-auto">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2">Name</th>
+                            <th class="px-4 py-2">Apply Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in viewData.NewApplicant)
+                        {
+                            <tr>
+                                <td class="border px-4 py-2">@e.FullName</td>
+                                <td class="border px-4 py-2">@e.JoinDate.ToString("M")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

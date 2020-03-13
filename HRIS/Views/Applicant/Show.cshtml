@@ -10,26 +10,36 @@
 
 <div class="my-50">
     <div id="emp-toolbar" class="my-3">
-        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadDisplayed()">Export Displayed</button>
-        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: Download()">Export All</button>
-        <div>
-            <form asp-action="Import" asp-controller="EmployeeIO" enctype="multipart/form-data">
-                <input type="file" name="files" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" placeholder="Import" />
-                <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
-            </form>
-        </div>
-        <button onclick="javascript: window.location.href = '/Applicant/Add'" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Applicant</button>
+        <button class="inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadDisplayed()">Export Displayed</button>
+        <button class="inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: Download()">Export All</button>
+        <button class="inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadTemplate()">Download template</button>
+        <form class="inline" asp-action="Import" asp-controller="ApplicantIO" enctype="multipart/form-data">
+            <input type="file" name="files" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" placeholder="Import" />
+            <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
+        </form>
+        <button onclick="javascript: window.location.href = '/Applicant/Add'" class="inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Applicant</button>
     </div>
 </div>
 
 <br />
-Employee Status
-<select id="status-sel">
-    <option value="1">Unprocessed</option>
-    <option value="2">Sc. Psychotest</option>
-    <option value="3">Sc. Interview</option>
-</select>
-<button onclick="javascript: displayByStatus()" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Set</button>
+<div class="my-10">
+    <div class="inline">
+        Applicant Status
+        <select id="status-sel">
+            <option value="">All</option>
+            <option value="1">Unprocessed</option>
+            <option value="2">Sc. Psychotest</option>
+            <option value="3">Sc. Interview</option>
+        </select>
+        <button onclick="javascript: displayByStatus()" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Set</button>
+    </div>
+    <div class="inline items-center border-b border-b-2 border-teal-500 py-2 ml-10">
+        <input id="search-input" class="appearance-none bg-transparent border-none text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="Search">
+        <button class="flex-shrink-0 bg-purple-500 hover:bg-purple-700 text-sm text-white py-1 px-2 rounded" type="button" onclick="javascript: Search()">
+            Go
+        </button>
+    </div>
+</div>
 
 <div>
     <table class="table-auto">
@@ -43,7 +53,7 @@ Employee Status
         </thead>
         <tbody>
             @{ var i = 1;}
-            @foreach(var a in applicant)
+            @foreach (var a in applicant)
             {
                 <tr>
                     <td class="border px-4 py-2">@i</td>
@@ -57,9 +67,10 @@ Employee Status
                     </td>
                     <td class="border px-4 py-2">@a.Role.Name</td>
                     <td class="border px-4 py-2">
-                        <button class="btn">Message</button>
+                        <button class="modal-open btn">Message</button>
                         <button id="u-@a.Id" class="btn" onclick="javascript: Update(this)">Update</button>
-                        <button class="btn">Options</button>
+                        <button id="c-@a.CV" class="btn" onclick="javascript: DownloadCV(this)">CV</button>
+                        <button class="btn" onclick="javascript: window.location.href = 'https://localhost:5001/applicant/removeApplicant/@a.Id'">Remove</button>
                     </td>
                 </tr>
                 i++;
@@ -102,15 +113,34 @@ Employee Status
             </ul>
         }
     </div>
-    <div name="per-page-set" style="margin: auto">
-        <input id="item-per-page" type="text" placeholder="..." name="filter" value="@ViewBag.perPage" style="width: 50px; height: 30px">
+    <div name="per-page-set" style="margin: auto" class="my-10">
+        <input id="item-per-page" type="text" placeholder="..." name="filter" value="@ViewBag.perPage" style="width: 50px; height: 30px" class="border-b border-b-2 border-teal-500">
         <input id="page-set-btn" type="button" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: setItemPerPage(this)" value="Set Page" />
     </div>
 </div>
 
+
 @section Scripts
 {
     <script type="text/javascript">
+        $(document).ready(function () {
+            $("#status-sel option").each(function(){
+                if ($(this).val() == '@ViewBag.status')
+                    $(this).attr("selected","selected");
+            });
+
+            $('#search-input').val('@ViewBag.filter');
+        })
+
+        function Search() {
+            var search = $('#search-input').val();
+
+            var filter = 'page=@(Model.Pager.CurrentPage)&filter='+ search +'&order=@ViewBag.order&perpage=@ViewBag.perPage&status=@ViewBag.status';
+            var url = 'https://localhost:5001/applicant/show?' + filter;
+            console.log(url);
+            
+            window.location.href = url;
+        }
 
         function Update(ID) {
             var id = ID.id.substring(2, ID.id.length);
@@ -118,7 +148,7 @@ Employee Status
             window.location.href = 'https://localhost:5001/applicant/edit/' + id;
         }
 
-        function Download(url='https://localhost:5001/applicantIO/GenereateAllApplicant') {
+        function Download(url='https://localhost:5001/applicantIO/GenereateAllApplicant', name='download.csv') {
            fetch(url)
           .then(resp => resp.blob())
           .then(blob => {
@@ -127,7 +157,7 @@ Employee Status
             a.style.display = 'none';
             a.href = url;
             // the filename you want
-            a.download = 'download.csv';
+            a.download = name;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -143,6 +173,19 @@ Employee Status
             Download(url);
         }
 
+        function DownloadCV(ID) {
+            var id = ID.id.substring(2, ID.id.length);
+            var url = 'https://localhost:5001/ApplicantIO/DownloadCV?cvPath=' + id;
+            console.log(url);
+
+            Download(url, 'cv.pdf');
+
+        }
+
+        function DownloadTemplate() {
+            Download('https://localhost:5001/applicantIO/downloadTemplate');
+        }
+
         function displayByStatus() {
             var status = $('#status-sel').val();
 
@@ -151,15 +194,55 @@ Employee Status
             window.location.href = url;
         }
 
-        function setItemPerPage()
-    {
-        var order = '@ViewBag.order';
-        var filter = '@ViewBag.filter';
-        var perPage = document.getElementById("item-per-page").value;
-        url = "https://localhost:5001/applicant/show?perpage=";
-        url += perPage + "&filter=" + filter + "&order=" + order;
-        window.location.href = url;
-    }
+        function setItemPerPage(){
+            var order = '@ViewBag.order';
+            var filter = '@ViewBag.filter';
+            var perPage = document.getElementById("item-per-page").value;
+            url = "https://localhost:5001/applicant/show?perpage=";
+            url += perPage + "&filter=" + filter + "&order=" + order;
+            window.location.href = url;
+        }
 
+
+
+        var openmodal = document.querySelectorAll('.modal-open')
+        for (var i = 0; i < openmodal.length; i++) {
+          openmodal[i].addEventListener('click', function(event){
+    	    event.preventDefault()
+    	    toggleModal()
+          })
+        }
+    
+        const overlay = document.querySelector('.modal-overlay')
+        overlay.addEventListener('click', toggleModal)
+    
+        var closemodal = document.querySelectorAll('.modal-close')
+        for (var i = 0; i < closemodal.length; i++) {
+          closemodal[i].addEventListener('click', toggleModal)
+        }
+    
+        document.onkeydown = function(evt) {
+          evt = evt || window.event
+          var isEscape = false
+          if ("key" in evt) {
+    	    isEscape = (evt.key === "Escape" || evt.key === "Esc")
+          } else {
+    	    isEscape = (evt.keyCode === 27)
+          }
+          if (isEscape && document.body.classList.contains('modal-active')) {
+    	    toggleModal()
+          }
+        };
+    
+    
+        function toggleModal () {
+          const body = document.querySelector('body')
+          const modal = document.querySelector('.modal')
+          modal.classList.toggle('opacity-0')
+          modal.classList.toggle('pointer-events-none')
+          body.classList.toggle('modal-active')
+        }
+    
+     
     </script>
 }

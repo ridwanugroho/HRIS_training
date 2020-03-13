@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using HRIS.Data;
 using HRIS.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRIS.Controllers
 {
@@ -19,11 +20,13 @@ namespace HRIS.Controllers
             this.db = db;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult SendBroadcast(string title, string subject, string message)
         {

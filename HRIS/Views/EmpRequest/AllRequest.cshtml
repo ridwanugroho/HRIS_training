@@ -5,6 +5,17 @@
     var allRequests = ViewData["allReqs"] as List<EmployeeRequest>;
 }
 
+<div class="my-10">
+    Request status
+    <select id="status-sel">
+        <option value="">All</option>
+        <option value="0">Pending</option>
+        <option value="1">Approved</option>
+        <option value="2">Rejected</option>
+    </select>
+    <button onclick="javascript: displayByStatus()" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Set</button>
+</div>
+
 <table class="table-auto">
     <thead>
         <tr>
@@ -32,3 +43,18 @@
         }
     </tbody>
 </table>
+
+
+
+@section Scripts
+{
+<script>
+    function displayByStatus() {
+            var status = $('#status-sel').val();
+
+            var url = 'https://localhost:5001/EmpRequest/allrequest?status=' + status;
+
+            window.location.href = url;
+        }
+</script>
+}

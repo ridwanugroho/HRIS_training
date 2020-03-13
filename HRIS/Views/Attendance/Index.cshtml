@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "_AdminViewLayout";
-    var attendances = ViewData["attendances"] as List<Employee>;
+    var attendances = ViewData["attendances"] as List<HRIS.Controllers.AttendanceViewData>;
 }
 
     <table class="table-auto">
@@ -20,11 +20,11 @@
                 <tr>
                     <td class="border px-4 py-2">@i</td>
                     <td class="border px-4 py-2">
-                        <button class="btn" onclick="javascript: window.location.href='https://localhost:5001/attendance/detail?id=@e.Id'">
-                            @e.FullName
+                        <button class="btn" onclick="javascript: window.location.href='https://localhost:5001/attendance/detail?id=@e.Employee.Id'">
+                            @e.Employee.FullName
                         </button>
                     </td>
-                    <td class="border px-4 py-2">Cek</td>
+                    <td class="border px-4 py-2">@e.AttendanceStatus</td>
                 </tr>
                 i++;
             }

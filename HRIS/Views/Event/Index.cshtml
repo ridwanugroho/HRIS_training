@@ -11,6 +11,12 @@
     </div>
 </div>
 
+
+<select >
+    <option>Upcoming</option>
+    <option>Past</option>
+</select>
+
 <div>
     <table class="table-auto">
         <thead>
@@ -19,6 +25,7 @@
                 <th class="px-4 py-2">Name</th>
                 <th class="px-4 py-2">Start Date</th>
                 <th class="px-4 py-2">End Date</th>
+                <th class="px-4 py-2">Status</th>
                 <th class="px-4 py-2">Options</th>
             </tr>
         </thead>
@@ -31,9 +38,11 @@
                     <td class="border px-4 py-2">@a.Title</td>
                     <td class="border px-4 py-2">@a.StartDate</td>
                     <td class="border px-4 py-2">@a.EndDate</td>
+                    <td class="border px-4 py-2">@a.Status</td>
                     <td class="border px-4 py-2">
-                        <button class="btn">Done</button>
-                        <button class="btn">Edit</button>
+                        <button class="btn" onclick="javascript: window.location.href = 'https://localhost:5001/event/done/@a.Id'">Done</button>
+                        <button class="btn" onclick="javascript: window.location.href = 'https://localhost:5001/event/edit/@a.Id'">Edit</button>
+                        <button class="btn" onclick="javascript: window.location.href = 'https://localhost:5001/event/remove/@a.Id'">Remove</button>
                     </td>
                 </tr>
                 i++;

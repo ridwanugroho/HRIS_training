@@ -10,6 +10,7 @@ using HRIS.Models;
 using HRIS.Data;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 namespace HRIS.Controllers
 {
@@ -172,5 +173,25 @@ namespace HRIS.Controllers
             }
         }
 
+        public FileResult downloadCV(string cvPath)
+        {
+            string filePath = "d:\\Prog\\HRIS\\HRIS\\wwwroot\\";
+            IFileProvider provider = new PhysicalFileProvider(filePath);
+            IFileInfo fileInfo = provider.GetFileInfo(cvPath);
+            var readStream = fileInfo.CreateReadStream();
+            var mimeType = "application/pdf";
+            return File(readStream, mimeType, cvPath);
+        }
+
+        public FileResult downloadTemplate()
+        {
+            string fileName = "applicantTemplate.csv";
+            string filePath = "d:\\Prog\\HRIS\\HRIS\\wwwroot\\doc\\";
+            IFileProvider provider = new PhysicalFileProvider(filePath);
+            IFileInfo fileInfo = provider.GetFileInfo(fileName);
+            var readStream = fileInfo.CreateReadStream();
+            var mimeType = "text/scv";
+            return File(readStream, mimeType, fileName);
+        }
     }
 }

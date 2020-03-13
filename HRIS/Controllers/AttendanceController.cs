@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using HRIS.Models;
 using HRIS.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRIS.Controllers
 {
@@ -18,15 +19,44 @@ namespace HRIS.Controllers
             this.db = db;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
-            var attn = (from a in db.Employee select a).ToList();
+            var emps = (from a in db.Employee select a).ToList();
+            var attnViewData = new List<AttendanceViewData>();
 
-            ViewData["attendances"] = attn;
+            foreach(var e in emps)
+            {
+                var attnDetail = from a in db.Attendance where a.UserId == e.Id.ToString() select a.Status;
+                
+                var attVD = new AttendanceViewData();
+                attVD.Employee = e;
+                attVD.AttendanceStatus = "Ok";
+
+                foreach(var a in attnDetail)
+                {
+                    Console.WriteLine("cek status {0} : {1}", e, a);
+                    if (a != "Ok")
+                    {
+                        attVD.AttendanceStatus = a;
+                        attVD.Detail = "Contact HR";
+
+                        break;
+                    }
+                }
+
+                attnViewData.Add(attVD);
+            }
+
+            foreach (var i in attnViewData)
+                Console.WriteLine("name: {0}    status:{1}", i.Employee.FullName, i.AttendanceStatus);
+
+            ViewData["attendances"] = attnViewData;
 
             return View();
         }
 
+        [Authorize]
         public IActionResult Detail(string id)
         {
             var username = db.Employee.Find(Guid.Parse(id)).FullName;
@@ -49,6 +79,10 @@ namespace HRIS.Controllers
         //Input Attendance
         public IActionResult ClockIn(string id, string date, string dueDate)
         {
+            Console.WriteLine(id);
+            Console.WriteLine(date);
+            Console.WriteLine(dueDate);
+            var _userID = (from e in db.Employee where e.NIK == id select e.Id.ToString()).First();
             var _date = new DateTime();
             var _dueDate = new DateTime();
 
@@ -67,7 +101,7 @@ namespace HRIS.Controllers
             }
 
             var userAttendanceToday = from a in db.Attendance
-                                      where a.UserId == id &&
+                                      where a.UserId == _userID &&
                                             a.CreatedAt.Date == _dueDate.Date
                                             select a;
 
@@ -83,7 +117,7 @@ namespace HRIS.Controllers
 
                 var _attn = new Attendance()
                 {
-                    UserId = id,
+                    UserId = _userID,
                     ClockIn = clockIn,
                     CreatedAt = clockIn,
                     ClockInStatus = clockInStatus,
@@ -91,6 +125,7 @@ namespace HRIS.Controllers
 
                 };
 
+                Console.WriteLine("create attendance today. ClockIn");
                 db.Attendance.Add(_attn);
                 db.SaveChanges();
 
@@ -103,27 +138,42 @@ namespace HRIS.Controllers
                     return BadRequest("ERROR");
 
                 var _attn = db.Attendance.Find(userAttendanceToday.First().Id);
+                _attn.Status = "Ok";
 
-                var now = DateTime.Today.ToString("yyyy/MM/dd") + " 17:00:00.000";
+                var now = DateTime.Today.ToString("yyyy/MM/dd") + " 18:00:00.000";
                 var clockOutStatus = "Ok";
                 var clockOut = _date;
 
                 if (clockOut < DateTime.Parse(now))
+                {
                     clockOutStatus = "U";
+                    _attn.Status = "U";
+                }
 
                 if (clockOut > DateTime.Parse(now))
+                {
                     clockOutStatus = "O";
+                    _attn.Status = "O";
+                }
 
                 _attn.ClockOut = clockOut;
                 _attn.EditedAt = clockOut;
                 _attn.ClockOutStatus = clockOutStatus;
-                _attn.Status = "Ok";
 
+                Console.WriteLine("ClockOut");
                 db.SaveChanges();
 
                 return Ok(_attn);
             }
 
         }
+    
+    }
+
+    public class AttendanceViewData
+    {
+        public Employee Employee { get; set; }
+        public string AttendanceStatus { get; set; }
+        public string Detail { get; set; }
     }
 }

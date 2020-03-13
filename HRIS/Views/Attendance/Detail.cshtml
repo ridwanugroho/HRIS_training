@@ -16,6 +16,7 @@
                     <th class="px-4 py-2">Clock In</th>
                     <th class="px-4 py-2">Clock Out</th>
                     <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2">Options</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,6 +29,7 @@
                         <td class="border px-4 py-2">@String.Format("{0:T}", a.ClockIn)</td>
                         <td class="border px-4 py-2">@String.Format("{0:T}", a.ClockOut)</td>
                         <td class="border px-4 py-2">@a.Status</td>
+                        <td class="border px-4 py-2"><button class="btn">Edit</button></td>
                     </tr>
                     i++;
                 }

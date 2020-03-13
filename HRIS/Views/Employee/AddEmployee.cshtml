@@ -33,7 +33,7 @@
         <form id="input-form" class="w-full max-w-lg" action="javascript: submit()">
             @if (editStatus)
             {
-                <input id="Id" name="Id" value="@edit.Id" hidden/>
+                <input id="Id" name="Id" value="@edit.Id" hidden />
                 <label for="NIK">Emp. Id</label>
                 <input value="@edit.NIK" required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="FullName">Full Name</label>
@@ -42,8 +42,27 @@
                 <input value="@edit.Religion" required type="text" id="Religion" name="Religion" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="DOB">Date of Birth</label>
                 <input value="@edit.DOB.ToString("yyyy-MM-dd")" required type="date" id="DOB" name="DOB" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <label for="Gender">Gender</label><br />
+                <select id="Gender" name="Gender" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
+                    <option>Select Gender</option>
+                    @if(edit.Gender == "male")
+                    {
+                        <option value="male" selected>Male</option>
+                    }
+                    @if(edit.Gender == "female")
+                    {
+                        <option value="female" selected>Female</option>
+                    }
+                    else
+                    {
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    }
+                </select><br />
                 <label for="Phone">Phone</label>
                 <input value="@edit.Phone" required type="text" id="Phone" name="Phone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <label for="Email">Email</label>
+                <input value="@edit.Email" required type="text" id="Email" name="Email" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
 
                 <label for="Country">Country</label>
                 <input value="@edit.Address.Country" required type="text" id="Country" name="Country" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
@@ -60,9 +79,54 @@
 
                 <label for="Status">Emp. Status</label><br />
                 <select id="Status" name="Status" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
-                    <option value="1">(1)Permanent</option>
-                    <option value="2">(2)Contract</option>
-                    <option value="3">(3)Probation</option>
+                    @if(edit.Role.Status == 1)
+                    {
+                        <option value="1" selected>(1)Permanent</option>
+                        <option value="2">(2)Contract</option>
+                        <option value="3">(3)Probation</option>
+                        <option value="4">(3)Retired</option>
+                        <option value="5">(3)Resign</option>
+
+                    }
+                    else if(edit.Role.Status == 2){
+                        <option value="1">(1)Permanent</option>
+                        <option value="2" selected>(2)Contract</option>
+                        <option value="3">(3)Probation</option>
+                        <option value="4">(4)Retired</option>
+                        <option value="5">(5)Resign</option>
+                    }
+                    else if(edit.Role.Status == 3)
+                    {
+                        <option value="1">(1)Permanent</option>
+                        <option value="2">(2)Contract</option>
+                        <option value="3" selected>(3)Probation</option>
+                        <option value="4">(4)Retired</option>
+                        <option value="5">(5)Resign</option>
+                    }
+                    else if(edit.Role.Status == 4)
+                    {
+                        <option value="1">(1)Permanent</option>
+                        <option value="2">(2)Contract</option>
+                        <option value="3">(3)Probation</option>
+                        <option value="4"selected>(4)Retired</option>
+                        <option value="5">(5)Resign</option>
+                    }
+                    else if(edit.Role.Status == 5)
+                    {
+                        <option value="1">(1)Permanent</option>
+                        <option value="2">(2)Contract</option>
+                        <option value="3">(3)Probation</option>
+                        <option value="4">(4)Retired</option>
+                        <option value="5" selected>(5)Resign</option>
+                    }
+                    else
+                    {
+                        <option value="1">(1)Permanent</option>
+                        <option value="2">(2)Contract</option>
+                        <option value="3">(3)Probation</option>
+                        <option value="3">(4)Retired</option>
+                        <option value="3">(5)Resign</option>
+                    }
                 </select><br />
 
                 <label for="JoinDate">Join Date</label>
@@ -77,6 +141,7 @@
                 <input @edit.Role.Level required type="text" id="Level" name="Level" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="Description">Description</label>
                 <input value="@edit.Role.Description" type="text" id="Description" name="Description" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <input type="text" id="Photo" name="Photo" hidden value="@edit.Photo" />
             }
             else
             {
@@ -88,8 +153,15 @@
                 <input required type="text" id="Religion" name="Religion" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="DOB">Date of Birth</label>
                 <input required type="date" id="DOB" name="DOB" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <select id="Gender" name="Gender" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
+                    <option>Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                </select><br />
                 <label for="Phone">Phone</label>
                 <input required type="text" id="Phone" name="Phone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <label for="Email">Email</label>
+                <input required type="text" id="Email" name="Email" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
 
                 <label for="Country">Country</label>
                 <input required type="text" id="Country" name="Country" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
@@ -109,6 +181,8 @@
                     <option value="1">(1)Permanent</option>
                     <option value="2">(2)Contract</option>
                     <option value="3">(3)Probation</option>
+                    <option value="4">(4)Retired</option>
+                    <option value="5">(5)Resign</option>
                 </select><br />
 
                 <label for="JoinDate">Join Date</label>
@@ -123,10 +197,10 @@
                 <input required type="text" id="Level" name="Level" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="Description">Description</label>
                 <input type="text" id="Description" name="Description" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <input type="text" id="Photo" name="Photo" hidden value="" />
 
             }
-            
-            <input type="text" id="Photo" name="Photo" hidden value="" />
+
 
             <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" type="submit">Submit</button>
         </form>
@@ -178,8 +252,11 @@
         console.log(JSON.stringify(dataToSend));
         var url = 'submit';
 
-        if ('@editStatus')
+        if ('@editStatus' == 'True') {
             url = 'https://localhost:5001/employee/update';
+        }
+        else
+            url = 'submit';
 
        $.ajax({
             url: url,

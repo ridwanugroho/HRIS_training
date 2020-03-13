@@ -4,20 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="node_modules/tailwindcss/dist/tailwind.css" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
     
 <div class="container">
-    <div id="new-wmp-title">
-        @if (editStatus) { 
-            <p>Edit Applicant</p>
-        }
-        else
-        {
-            <p>Add New Applicant</p>
-        }
-    </div>
     <div>
         <form action="javascript: uploadPhoto()" enctype="multipart/form-data">
             <div id="img-preview">
@@ -41,8 +33,15 @@
             <input required type="text" id="Religion" name="Religion" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
             <label for="DOB">Date of Birth</label>
             <input required type="date" id="DOB" name="DOB" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <select id="Gender" name="Gender" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
+                <option>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select><br />
             <label for="Phone">Phone</label>
             <input required type="text" id="Phone" name="Phone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <label for="Email">Email</label>
+            <input required type="text" id="Email" name="Email" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
 
             <label for="Country">Country</label>
             <input required type="text" id="Country" name="Country" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
@@ -87,6 +86,9 @@
 
 </div>
 
+<script src="js/site.js" asp-append-version="true"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+
 <script type="text/javascript">
 
     var photoUrl = '';
@@ -108,6 +110,9 @@
             JoinDate: rawData.JoinDate,
             Phone: rawData.Phone,
             Photo: rawData.Photo,
+            Email: rawData.Email,
+            CV: rawData.CV,
+            Gender: rawData.Gender,
             Address: {
                 Country: rawData.Country,
                 Province: rawData.Province,
@@ -127,14 +132,8 @@
         }
 
         console.log(JSON.stringify(dataToSend));
-        console.log('@editStatus');
-
-        var url = 'submit';
-
-        if ('@editStatus' == true) {
-            url = 'https://localhost:5001/applicant/update';
-            console.log("update...");
-        }
+        
+        url = 'https://localhost:5001/applicant/submit';
 
        $.ajax({
             url: url,
@@ -144,8 +143,7 @@
 
             success: function (data) {
                 console.log(data);
-
-                window.location.href = 'https://localhost:5001/applicant/show';
+                window.location.href = 'applicationInput.html';
             },
 
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -183,7 +181,7 @@
         });
     }
 
-    function uploadPhoto() {
+    function uploadCV() {
         var fd = new FormData();
         var files = $('#_CV')[0].files[0];
         fd.append('file', files);
@@ -223,5 +221,7 @@
         reader.readAsDataURL($('#_Photo').files[0]);
     }
 </script>
+
+
 </body>
 </html>

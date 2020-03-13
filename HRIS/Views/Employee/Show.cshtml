@@ -11,33 +11,47 @@
 
 <div class="my-50">
     <div id="emp-toolbar" class="my-3">
-        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadDisplayed()">Export Displayed</button>
-        <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: Download()">Export All</button>
-        <div>
-            <form asp-action="Import" asp-controller="EmployeeIO" enctype="multipart/form-data">
-                <input type="file" name="files" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" placeholder="Import" />
-                <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
-                <button type="button" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadTemplate()">Download Template</button>
-            </form>
-        </div>
-        <button onclick="javascript: window.location.href = '/Employee/Add'" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Employee</button>
+        <button class="inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadDisplayed()">Export Displayed</button>
+        <button class=" inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: Download()">Export All</button>
+        <form class="inline py-1 px-2 rounded" asp-action="Import" asp-controller="EmployeeIO" enctype="multipart/form-data">
+            <input type="file" name="files" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" placeholder="Import" />
+            <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Import</button>
+            <button type="button" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: DownloadTemplate()">Download Template</button>
+        </form>
+        <button onclick="javascript: window.location.href = '/Employee/Add'" class="inline bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Employee</button>
     </div>
 </div>
 
 <br />
-Employee Status
-<select id="status-sel">
-    <option value="1">Permanent</option>
-    <option value="2">Contract</option>
-    <option value="3">Probation</option>
-</select>
-<button onclick="javascript: displayByStatus()" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Set</button>
+<div class="my-10">
+    <div class="inline">
+        Employee Status
+        <select id="status-sel">
+            <option value="">All</option>
+            <option value="1">Permanent</option>
+            <option value="2">Contract</option>
+            <option value="3">Probation</option>
+            <option value="4">Retired</option>
+            <option value="5">Resign</option>
+        </select>
+        <button onclick="javascript: displayByStatus()" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Set</button>
+    </div>
+    <div class="inline items-center border-b border-b-2 border-teal-500 py-2 ml-10">
+        <input id="search-input" class="appearance-none bg-transparent border-none text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="Search">
+        <button class="flex-shrink-0 bg-purple-500 hover:bg-purple-700 text-sm text-white py-1 px-2 rounded" type="button" onclick="javascript: Search()">
+            Go
+        </button>
+    </div>
+</div>
+
+
 
 <div>
     <table class="table-auto">
         <thead>
             <tr>
                 <th class="px-4 py-2">No</th>
+                <th class="px-4 py-2">NIK</th>
                 <th class="px-4 py-2">Name</th>
                 <th class="px-4 py-2">Position</th>
                 <th class="px-4 py-2">Actions</th>
@@ -45,10 +59,11 @@ Employee Status
         </thead>
         <tbody>
             @{ var i = 1;}
-            @foreach(var e in emps.Items)
+            @foreach (var e in emps.Items)
             {
                 <tr>
                     <td class="border px-4 py-2">@i</td>
+                    <td class="border px-4 py-2">@e.NIK</td>
                     <td class="border px-4 py-2">
                         <div class="h-10 w-10">
                             <img src="~/@e.Photo" />
@@ -59,9 +74,9 @@ Employee Status
                     </td>
                     <td class="border px-4 py-2">@e.Role.Name</td>
                     <td class="border px-4 py-2">
-                        <button class="btn">Message</button>
+                        <button id="m-@e.Id" class="btn" data-toggle="modal" data-target="#myModal" onclick="javascript: SendButtonPressed(this)">Message</button>
                         <button id="u-@e.Id" class="btn" onclick="javascript: Update(this)">Update</button>
-                        <button class="btn">Options</button>
+                        <button class="btn" onclick="javascript: window.location.href = 'https://localhost:5001/employee/removeEmployee/@e.Id'">Remove</button>
                     </td>
                 </tr>
                 i++;
@@ -78,41 +93,81 @@ Employee Status
                 @if (Model.Pager.CurrentPage > 1)
                 {
                     <li>
-                        <a href="~/employee/show?&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order">First</a>
+                        <a href="~/employee/show?&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order&status=@ViewBag.status">First</a>
                     </li>
                     <li>
-                        <a href="~/employee/show?page=@(Model.Pager.CurrentPage-1)&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order">Previous</a>
+                        <a href="~/employee/show?page=@(Model.Pager.CurrentPage-1)&perpage=@ViewBag.perPage&filter=@ViewBag.filter&order=@ViewBag.order&status=@ViewBag.status">Previous</a>
                     </li>
                 }
 
                 @for (var p = Model.Pager.StartPage; p <= Model.Pager.EndPage; p++)
                 {
                     <li class="@(p==Model.Pager.CurrentPage ? "active" :"")">
-                        <a href="~/employee/show?page=@p&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">@p</a>
+                        <a href="~/employee/show?page=@p&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage&status=@ViewBag.status">@p</a>
                     </li>
                 }
 
                 @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
                 {
                     <li>
-                        <a href="~/employee/show?page=@(Model.Pager.CurrentPage + 1)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">Next</a>
+                        <a href="~/employee/show?page=@(Model.Pager.CurrentPage + 1)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage&status=@ViewBag.status">Next</a>
                     </li>
                     <li>
-                        <a href="~/employee/show?page=@(Model.Pager.TotalPages)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage">Last</a>
+                        <a href="~/employee/show?page=@(Model.Pager.TotalPages)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage&status=@ViewBag.status">Last</a>
                     </li>
                 }
             </ul>
         }
     </div>
-    <div name="per-page-set" style="margin: auto">
-        <input id="item-per-page" type="text" placeholder="..." name="filter" value="@ViewBag.perPage" style="width: 50px; height: 30px">
+    <div name="per-page-set" style="margin: auto" class="py-10 border-b border-b-2 border-teal-500">
+        <input id="item-per-page" type="text" placeholder="..." name="filter" value="@ViewBag.perPage" class="">
         <input id="page-set-btn" type="button" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: setItemPerPage(this)" value="Set Page" />
     </div>
 </div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Send Mail</h4>
+            </div>
+            <div class="modal-body">
+                <form asp-action="SendMessage" asp-controller="Employee" method="get">
+                    <input type="text" id="msg-id" name="id" value="" hidden />
+                    <label for="message">Message</label>
+                    <textarea required type="text" id="message" name="message" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" /></textarea>
+                    <br />
+                    <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" >Send</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="bg-purple-500 hover:bg-red-700 text-white py-1 px-2 rounded" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
 @section Scripts
 {
     <script type="text/javascript">
+        $(document).ready(function () {
+            $("#status-sel option").each(function(){
+                if ($(this).val() == '@ViewBag.status')
+                    $(this).attr("selected","selected");
+            });
+
+            $('#search-input').val('@ViewBag.filter');
+        })
+
+        function SendButtonPressed(ID) {
+            console.log(ID.id);
+            $('#msg-id').val(ID.id);
+        }
 
         function Update(ID) {
             var id = ID.id.substring(2, ID.id.length);
@@ -157,15 +212,15 @@ Employee Status
             window.location.href = url;
         }
 
-        function setItemPerPage()
-    {
-        var order = '@ViewBag.order';
-        var filter = '@ViewBag.filter';
-        var perPage = document.getElementById("item-per-page").value;
-        url = "https://localhost:5001/Employee/show?perpage=";
-        url += perPage + "&filter=" + filter + "&order=" + order;
-        window.location.href = url;
-    }
+        function Search() {
+            var search = $('#search-input').val();
+
+            var filter = 'page=@(Model.Pager.CurrentPage)&filter='+ search +'&order=@ViewBag.order&perpage=@ViewBag.perPage&status=@ViewBag.status';
+            var url = 'https://localhost:5001/employee/show?' + filter;
+            console.log(url);
+            
+            window.location.href = url;
+        }
 
     </script>
 }

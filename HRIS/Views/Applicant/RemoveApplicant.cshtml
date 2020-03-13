@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "RemoveConfirmation";
+    Layout = "_ADminViewLayout";
+    var remove = ViewData["remove"] as HRIS.Models.Applicant;
+}
+
+<h3>Employee Removal</h3>
+
+Nama : @remove.FullName
+<br />
+Posisi : @remove.Role.Name
+<br />
+Divisi : @remove.Role.Division
+<br />
+Sub Divisi : @remove.Role.SubDivision
+<br />
+Level : @remove.Address
+<br />
+
+<form asp-action="Remove" asp-controller="Applicant" method="get">
+    <input name="id" value="@remove.Id" hidden />
+    <label for="notes">Catatan</label>
+    <textarea required type="text" id="notes" name="notes" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" /></textarea>
+    <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" type="submit">Submit</button>
+</form>

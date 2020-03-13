@@ -9,15 +9,16 @@ using Microsoft.AspNetCore.SignalR;
 using HRIS.SignalR;
 using HRIS.Models;
 using HRIS.Data;
+using Microsoft.AspNet.SignalR;
 
 namespace HRIS.Controllers
 {
     public class EmpRequestController : Controller
     {
         private AppDbContext db;
-        private readonly IHubContext<ChatHub> _hubContext;
+        private readonly Microsoft.AspNetCore.SignalR.IHubContext<ChatHub> _hubContext;
 
-        public EmpRequestController(IHubContext<ChatHub> _hubContext, AppDbContext db)
+        public EmpRequestController(Microsoft.AspNetCore.SignalR.IHubContext<ChatHub> _hubContext, AppDbContext db)
         {
             this._hubContext = _hubContext;
             this.db = db;
@@ -86,10 +87,12 @@ namespace HRIS.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult AllRequest(int? perpage, int? page, int? order, string filter, int? status)
         {
             var reqs = (from r in db.EmployeeRequest select r).ToList();
 
+            reqs = reqs.OrderByDescending(x => x.CreatedAt).ToList();
 
             int _perPage = 5;
             if (perpage.HasValue)
@@ -103,6 +106,9 @@ namespace HRIS.Controllers
                 Pager = pager
             };
 
+            if (status.HasValue)
+                reqs = (from r in reqs where r.ApprovalStatus == status.Value select r).ToList();
+
             reqs.ForEach(
                 x => x.From = db.Employee.Find(Guid.Parse(x.From)).FullName
                 );
@@ -113,6 +119,7 @@ namespace HRIS.Controllers
             return View(viewModel);
         }
 
+        [Authorize]
         public IActionResult Approve(string Id, string notes)
         {
             var req = db.EmployeeRequest.Find(Guid.Parse(Id));
@@ -133,6 +140,7 @@ namespace HRIS.Controllers
             return Ok(req);
         }
 
+        [Authorize]
         public IActionResult Reject(string Id, string notes)
         {
             var req = db.EmployeeRequest.Find(Guid.Parse(Id));

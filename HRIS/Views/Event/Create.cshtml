@@ -2,18 +2,60 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "_AdminViewLayout";
+    var edit = new Event();
+    bool editStatus = false;
+    if (ViewData["edit"] != null)
+    {
+        edit = ViewData["edit"] as HRIS.Models.Event;
+        editStatus = true;
+    }
 }
 
+@if (editStatus)
+{
+    <form asp-action="Update" asp-controller="Event" method="post">
+        <input name="Id" value="@edit.Id" hidden />
+        <label for="title">Event Name</label>
+        <input required value="@edit.Title" type="text" id="title" name="title" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <label for="status">Status</label>
+        <input required value="@edit.Status" type="text" id="status" name="status" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <label for="detail">Detail</label>
+        <input required value="@edit.Detail" type="text" id="detail" name="detail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <div>
+            <div class="inline">
+                <label for="startDate">Start Date</label>
+                <input required value="@edit.StartDate" type="datetime-local" id="startDate" name="startDate" class="appearance-none bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            </div>
+            <div class="inline">
+                <label for="endDate">End Date</label>
+                <input required value="@edit.EndDate" type="datetime-local" id="endDate" name="endDate" class="appearance-none bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            </div>
+        </div>
+        <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Update</button>
+        <button type="button" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" onclick="javascript: window.location.href = 'https://localhost:5001/event/'">Cancel</button>
+    </form>
+}
+else
+{
     <form asp-action="CreateEvent" asp-controller="Event" method="post">
+        <input name="Status" value="undone" />
         <label for="title">Event Name</label>
         <input required type="text" id="title" name="title" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
         <label for="detail">Detail</label>
         <input required type="text" id="detail" name="detail" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
-        <label for="startDate">Start Date</label>
-        <input required type="datetime-local" id="startDate" name="startDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
-        <label for="endDate">End Date</label>
-        <input required type="datetime-local" id="endDate" name="endDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+        <div>
+            <div class="inline">
+                <label for="startDate">Start Date</label>
+                <input required type="datetime-local" id="startDate" name="startDate" class="appearance-none bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            </div>
+            <div class="inline">
+                <label for="endDate">End Date</label>
+                <input required type="datetime-local" id="endDate" name="endDate" class="appearance-none bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            </div>
+        </div>
         <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded">Add Event</button>
     </form>
+}
+
 
 
