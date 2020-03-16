@@ -174,6 +174,36 @@ namespace HRIS.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddEmpoyee(Employee emp, Role role, Address addr, [FromForm(Name = "file")] IFormFile files)
+        {
+            Console.WriteLine("apakah ada filenya? : {0}", files.FileName);
+            var path = "wwwroot/img/usr_img/";
+            var filename = "";
+            Directory.CreateDirectory(path);
+            if (files != null)
+            {
+                Console.WriteLine("ada gambarnya : {0}", files.FileName);
+
+                filename = Path.Combine(path, Path.GetRandomFileName() + ".jpg");
+                using (var stream = new FileStream(filename, FileMode.Create))
+                {
+                    await files.CopyToAsync(stream);
+                }
+            }
+
+            emp.Photo = filename.Substring(8);
+
+            //nanti ditambah validasi employee data
+            emp.CreatedAt = DateTime.Now;
+            emp.DataStatus = 1;
+            emp.Role = role;
+            emp.Address = addr;
+            db.Employee.Add(emp);
+            db.SaveChanges();
+
+            return Ok(emp);
+        }
 
         public FileResult downloadTemplate()
         {

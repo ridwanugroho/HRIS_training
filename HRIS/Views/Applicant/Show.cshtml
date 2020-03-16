@@ -70,6 +70,7 @@
                         <button class="modal-open btn">Message</button>
                         <button id="u-@a.Id" class="btn" onclick="javascript: Update(this)">Update</button>
                         <button id="c-@a.CV" class="btn" onclick="javascript: DownloadCV(this)">CV</button>
+                        <button id="s-@a.CV" class="btn" onclick="javascript: ShowCV(this)">show</button>
                         <button class="btn" onclick="javascript: window.location.href = 'https://localhost:5001/applicant/removeApplicant/@a.Id'">Remove</button>
                     </td>
                 </tr>
@@ -173,13 +174,20 @@
             Download(url);
         }
 
+        function ShowCV(ID) {
+            var id = ID.id.substring(2, ID.id.length);
+            var url = 'https://localhost:5001/ApplicantIO/ShowCV?cvPath=' + id;
+            console.log(url);
+
+            window.location.href = url;
+        }
+
         function DownloadCV(ID) {
             var id = ID.id.substring(2, ID.id.length);
             var url = 'https://localhost:5001/ApplicantIO/DownloadCV?cvPath=' + id;
             console.log(url);
 
             Download(url, 'cv.pdf');
-
         }
 
         function DownloadTemplate() {

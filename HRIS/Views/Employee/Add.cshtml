@@ -22,17 +22,14 @@
         }
     </div>
     <div>
-        <form action="javascript: uploadPhoto()" enctype="multipart/form-data">
-            <div id="img-preview">
-                <img id="img-prev-thumb" style="display:none"/>
-            </div>
-            <label for="_Photo">Photo</label>
-            <input type="file" id="_Photo" name="_Photo" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
-            <button class="bg-purple-500 hover:bg-purple-700 text-white py-1 px-2 rounded" type="submit">Upload</button>
-        </form>
-        <form id="input-form" class="w-full max-w-lg" action="javascript: submit()">
+        <form id="input-form" class="w-full max-w-lg" asp-action="Submit" asp-controller="Employee" method="post" enctype="multipart/form-data">
             @if (editStatus)
             {
+                <div class="h-20 w-20">
+                    <img src="~/@edit.Photo" />
+                </div>
+                <label for="_Photo">Photo</label>
+                <input type="file" id="_Photo" name="file" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <input id="Id" name="Id" value="@edit.Id" hidden />
                 <label for="NIK">Emp. Id</label>
                 <input value="@edit.NIK" required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
@@ -45,11 +42,11 @@
                 <label for="Gender">Gender</label><br />
                 <select id="Gender" name="Gender" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
                     <option>Select Gender</option>
-                    @if(edit.Gender == "male")
+                    @if (edit.Gender == "male")
                     {
                         <option value="male" selected>Male</option>
                     }
-                    @if(edit.Gender == "female")
+                    @if (edit.Gender == "female")
                     {
                         <option value="female" selected>Female</option>
                     }
@@ -79,7 +76,7 @@
 
                 <label for="Status">Emp. Status</label><br />
                 <select id="Status" name="Status" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
-                    @if(edit.Role.Status == 1)
+                    @if (edit.Role.Status == 1)
                     {
                         <option value="1" selected>(1)Permanent</option>
                         <option value="2">(2)Contract</option>
@@ -88,14 +85,15 @@
                         <option value="5">(3)Resign</option>
 
                     }
-                    else if(edit.Role.Status == 2){
+                    else if (edit.Role.Status == 2)
+                    {
                         <option value="1">(1)Permanent</option>
                         <option value="2" selected>(2)Contract</option>
                         <option value="3">(3)Probation</option>
                         <option value="4">(4)Retired</option>
                         <option value="5">(5)Resign</option>
                     }
-                    else if(edit.Role.Status == 3)
+                    else if (edit.Role.Status == 3)
                     {
                         <option value="1">(1)Permanent</option>
                         <option value="2">(2)Contract</option>
@@ -103,15 +101,15 @@
                         <option value="4">(4)Retired</option>
                         <option value="5">(5)Resign</option>
                     }
-                    else if(edit.Role.Status == 4)
+                    else if (edit.Role.Status == 4)
                     {
                         <option value="1">(1)Permanent</option>
                         <option value="2">(2)Contract</option>
                         <option value="3">(3)Probation</option>
-                        <option value="4"selected>(4)Retired</option>
+                        <option value="4" selected>(4)Retired</option>
                         <option value="5">(5)Resign</option>
                     }
-                    else if(edit.Role.Status == 5)
+                    else if (edit.Role.Status == 5)
                     {
                         <option value="1">(1)Permanent</option>
                         <option value="2">(2)Contract</option>
@@ -132,7 +130,7 @@
                 <label for="JoinDate">Join Date</label>
                 <input value="@edit.JoinDate.ToString("yyyy-MM-dd")" required type="date" id="JoinDate" name="JoinDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="RoleName">Position</label>
-                <input value="@edit.Role.Name" required type="text" id="RoleName" name="RoleName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <input value="@edit.Role.Name" required type="text" id="RoleName" name="Name" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="Division">Division</label>
                 <input value="@edit.Role.Division" required type="text" id="Division" name="Division" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="SubDivision">SubDivision</label>
@@ -145,6 +143,10 @@
             }
             else
             {
+                <img id="thumb-photo" src="#" alt="your image" hidden/>
+                <label for="_Photo">Photo</label>
+                <input required onchange="showPhoto(this)" type="file" id="_Photo" name="file" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+
                 <label for="NIK">Emp. Id</label>
                 <input required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="FullName">Full Name</label>
@@ -155,8 +157,8 @@
                 <input required type="date" id="DOB" name="DOB" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <select id="Gender" name="Gender" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white">
                     <option>Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                 </select><br />
                 <label for="Phone">Phone</label>
                 <input required type="text" id="Phone" name="Phone" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
@@ -188,7 +190,7 @@
                 <label for="JoinDate">Join Date</label>
                 <input required type="date" id="JoinDate" name="JoinDate" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="RoleName">Position</label>
-                <input required type="text" id="RoleName" name="RoleName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <input required type="text" id="RoleName" name="Name" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="Division">Division</label>
                 <input required type="text" id="Division" name="Division" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="SubDivision">SubDivision</label>
@@ -230,7 +232,7 @@
             Religion: rawData.Religion,
             JoinDate: rawData.JoinDate,
             Phone: rawData.Phone,
-            Photo: rawData.Photo,
+            Photo: rawData._Photo,
             Address: {
                 Country: rawData.Country,
                 Province: rawData.Province,
@@ -305,16 +307,80 @@
         });
     }
 
-    function showPhoto() {
-        var reader = new FileReader();
-        $('#img-prev-thumb').show();
-        reader.onload = function (e) {
-            $('#img-prev-thumb').attr('src', e.target.result)
-                .width(200).height(200);
-        };
+    function Coba() {
+        var rawData = $('#input-form').serializeArray().reduce(function (obj, item) {
+            obj[item.name] = item.value;
+            return obj;
+        }, {});
 
-        
-        reader.readAsDataURL($('#_Photo').files[0]);
+
+        var dataToSend = {
+            Id: rawData.Id,
+            NIK: rawData.NIK,
+            FullName: rawData.FullName,
+            DOB: rawData.DOB,
+            Religion: rawData.Religion,
+            JoinDate: rawData.JoinDate,
+            Phone: rawData.Phone,
+            Address: {
+                Country: rawData.Country,
+                Province: rawData.Province,
+                City: rawData.City,
+                Distric: rawData.Distric,
+                SubDistric: rawData.SubDistric,
+                Street:rawData.Street
+            },
+            Role: {
+                Status: rawData.Status,
+                Name: rawData.RoleName,
+                Division: rawData.Division,
+                SubDivision: rawData.SubDivision,
+                Level: rawData.Level,
+                Description: rawData.Description
+            }
+        }
+
+        var fd = new FormData();
+        var files = $('#_Photo')[0].files[0];
+        fd.append('files', files);
+        fd.append('emp', JSON.stringify(dataToSend));
+
+        console.log(fd);
+
+        $.ajax({
+            url: 'https://localhost:5001/employee/submit',
+            type: 'post',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(response){
+                if(response != 0){
+                    console.log(response);
+
+                }else{
+                    alert('file not uploaded');
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#thumb-photo')
+                    .removeAttr('hidden')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(200);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 </script>
 }

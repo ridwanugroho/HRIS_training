@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HRIS.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
+    //[Route("[controller]")]
+    //[ApiController]
     public class EmployeeController : Controller
     {
         private AppDbContext db;
@@ -34,7 +34,7 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpGet("show")]
+        //[HttpGet("show")]
         public IActionResult Show(int ? perpage, int ? page, int ? order, string filter, int ? status)
         {
 
@@ -83,39 +83,67 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpGet("add")]
-        public IActionResult AddEmployee()
+        public IActionResult Add()
         {
             //return add employee page
             return View();
         }
 
         [Authorize]
-        [HttpGet("edit/{id}")]
+        //[HttpGet("edit/{id}")]
         public IActionResult Edit(string id)
         {
             var emp = db.Employee.Find(Guid.Parse(id));
 
             ViewData["editData"] = emp;
 
-            return View("AddEmployee");
+            return View("Add");
         }
 
         [Authorize]
-        [HttpPost("submit")]
-        public IActionResult AddEmpoyee(Employee emp)
+        //[HttpPost("submit")]
+        public async Task<IActionResult> Submit(Employee emp, Role role, Address addr, [FromForm(Name = "file")] IFormFile files)
         {
-            //nanti ditambah validasi employee data
-            emp.CreatedAt = DateTime.Now;
-            emp.DataStatus = 1;
-            db.Employee.Add(emp);
-            db.SaveChanges();
+            if(files != null)
+            {
+                Console.WriteLine("apakah ada filenya? : {0}", files.FileName);
+                var path = "wwwroot/img/usr_img/";
+                var filename = "";
+                Directory.CreateDirectory(path);
+                if (files != null)
+                {
+                    Console.WriteLine("ada gambarnya : {0}", files.FileName);
 
-            return Ok(emp);
+                    filename = Path.Combine(path, Path.GetRandomFileName() + ".jpg");
+                    using (var stream = new FileStream(filename, FileMode.Create))
+                    {
+                        await files.CopyToAsync(stream);
+                    }
+                }
+
+                emp.Photo = filename.Substring(8);
+
+                //nanti ditambah validasi employee data
+                emp.CreatedAt = DateTime.Now;
+                emp.DataStatus = 1;
+                emp.Role = role;
+                emp.Address = addr;
+                db.Employee.Add(emp);
+                db.SaveChanges();
+
+                return RedirectToAction("Show");
+            }
+
+            else
+            {
+                emp.Address = addr;
+                emp.Role = role;
+                return Update(emp);
+            }
         }
 
         [Authorize]
-        [HttpPost("UploadPhoto")]
+        //[HttpPost("UploadPhoto")]
         public async Task<IActionResult> UploadPhoto([FromForm(Name = "file")] IFormFile files)
         {
             var path = "wwwroot/img/usr_img/";
@@ -136,7 +164,7 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpGet("Detail/{id}")]
+        //[HttpGet("Detail/{id}")]
         public IActionResult Detail(string id)
         {
             var emp = db.Employee.Find(Guid.Parse(id));
@@ -147,7 +175,7 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpPost("Update")]
+        //[HttpPost("Update")]
         public IActionResult Update(Employee emp)
         {
             // validasi data
@@ -173,7 +201,7 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpGet("sendMessage")]
+        //[HttpGet("sendMessage")]
         public IActionResult SendMessage(string id, string message)
         {
             var addr = db.Employee.Find(Guid.Parse(id.Substring(2))).Email;
@@ -184,7 +212,7 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpGet("RemoveEmployee/{id}")]
+        //[HttpGet("RemoveEmployee/{id}")]
         public IActionResult RemoveEmployee(string id)
         {
             var _emp = db.Employee.Find(Guid.Parse(id));
@@ -195,7 +223,7 @@ namespace HRIS.Controllers
         }
 
         [Authorize]
-        [HttpGet("Remove")]
+        //[HttpGet("Remove")]
         public IActionResult Remove(string id, int status, string notes)
         {
             Console.WriteLine(id);

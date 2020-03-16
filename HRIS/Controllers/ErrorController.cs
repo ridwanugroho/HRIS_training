@@ -17,5 +17,10 @@ namespace HRIS.Controllers
         {
             return RedirectToAction("Index", "Admin");
         }
+
+        public IActionResult BadRequestCustom()
+        {
+            return View();
+        }
     }
 }

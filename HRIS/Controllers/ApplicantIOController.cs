@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -181,6 +182,23 @@ namespace HRIS.Controllers
             var readStream = fileInfo.CreateReadStream();
             var mimeType = "application/pdf";
             return File(readStream, mimeType, cvPath);
+        }
+
+        public FileResult ShowCV(string cvPath)
+        {
+            var cd = new System.Net.Mime.ContentDisposition()
+            {
+                FileName = "CV-"+cvPath,
+                Inline = true
+            };
+            cd.FileName = "CV-" + cvPath;
+            
+            string filePath = "d:\\Prog\\HRIS\\HRIS\\wwwroot\\" + cvPath;
+            var mimeType = "application/pdf";
+            HttpContext.Response.Headers.Append("Content-Disposition", cd.ToString());
+            Response.Headers.Add("X-Content-Type-Options", "nosniff");
+
+            return File(System.IO.File.ReadAllBytes(filePath), mimeType);
         }
 
         public FileResult downloadTemplate()

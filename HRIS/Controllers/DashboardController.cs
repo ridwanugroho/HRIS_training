@@ -46,7 +46,8 @@ namespace HRIS.Controllers
                         where e.ClockIn.Value.Date == dtNow
                         select e);
             temp.ToList().ForEach(x => Console.WriteLine(x.UserId));
-            dashboardView.UpcomingEvent = (from e in db.Event where dtNow.AddDays(30) > e.StartDate
+            dashboardView.UpcomingEvent = (from e in db.Event where dtNow.AddDays(30) > e.StartDate &&
+                                           e.Status == "undone"
                                          orderby e.StartDate select e).ToList();
             dashboardView.NewApplicant = (from a in applicants where a.Role.Status == 1 select a).ToList();
 

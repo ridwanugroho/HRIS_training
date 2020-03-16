@@ -91,6 +91,9 @@ namespace HRIS
                     if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||
                         response.StatusCode == (int)HttpStatusCode.Forbidden)
                         response.Redirect("/Error/UnauthorizedCustom");
+
+                    if (response.StatusCode == (int)HttpStatusCode.BadRequest)
+                        response.Redirect("/Error/BadRequestCustom");
                 });
             }
             else

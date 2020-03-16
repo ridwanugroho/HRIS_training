@@ -175,7 +175,7 @@
             window.location.href = 'https://localhost:5001/employee/edit/' + id;
         }
 
-        function Download(url='https://localhost:5001/Employee/GenereateAllEmployee') {
+        function Download(url='https://localhost:5001/EmployeeIO/GenereateAllEmployee') {
            fetch(url)
           .then(resp => resp.blob())
           .then(blob => {
