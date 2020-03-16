@@ -38,7 +38,7 @@
 else
 {
     <form asp-action="CreateEvent" asp-controller="Event" method="post">
-        <input name="Status" value="undone" />
+        <input name="Status" value="undone" hidden/>
         <label for="title">Event Name</label>
         <input required type="text" id="title" name="title" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
         <label for="detail">Detail</label>

@@ -194,7 +194,7 @@
         }
 
         function DownloadDisplayed() {
-            var filter = 'page=@(Model.Pager.CurrentPage)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage';
+            var filter = 'status=@(ViewBag.status)&page=@(Model.Pager.CurrentPage)&filter=@ViewBag.filter&order=@ViewBag.order&perpage=@ViewBag.perPage';
             var url = 'https://localhost:5001/employeeIO/partialDownload?' + filter;
             console.log(url);
             Download(url);

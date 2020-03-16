@@ -102,7 +102,7 @@ namespace HRIS.Controllers
 
         [Authorize]
         //[HttpPost("submit")]
-        public async Task<IActionResult> Submit(Employee emp, Role role, Address addr, [FromForm(Name = "file")] IFormFile files)
+        public async Task<IActionResult> Submit(string edit, Employee emp, Role role, Address addr, [FromForm(Name = "file")] IFormFile files)
         {
             if(files != null)
             {
@@ -122,7 +122,10 @@ namespace HRIS.Controllers
                 }
 
                 emp.Photo = filename.Substring(8);
+            }
 
+            if(string.IsNullOrEmpty(edit))
+            {
                 //nanti ditambah validasi employee data
                 emp.CreatedAt = DateTime.Now;
                 emp.DataStatus = 1;

@@ -25,11 +25,13 @@
         <form id="input-form" class="w-full max-w-lg" asp-action="Submit" asp-controller="Employee" method="post" enctype="multipart/form-data">
             @if (editStatus)
             {
-                <div class="h-20 w-20">
-                    <img src="~/@edit.Photo" />
-                </div>
+                <input name="edit" value="1" hidden />
+
                 <label for="_Photo">Photo</label>
-                <input type="file" id="_Photo" name="file" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <input required onchange="showPhoto(this)" type="file" id="_Photo" name="file" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
+                <img class="h-20 w-20" id="thumb-photo" src="~/@edit.Photo" alt="your image" />
+
+                <br /><br />
                 <input id="Id" name="Id" value="@edit.Id" hidden />
                 <label for="NIK">Emp. Id</label>
                 <input value="@edit.NIK" required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
@@ -143,10 +145,12 @@
             }
             else
             {
-                <img id="thumb-photo" src="#" alt="your image" hidden/>
+                <input name="edit" value="1" hidden />
+
                 <label for="_Photo">Photo</label>
                 <input required onchange="showPhoto(this)" type="file" id="_Photo" name="file" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
-
+                <img class="h-20 w-20" id="thumb-photo" src="#" alt="your image" hidden />
+                <br /><br />
                 <label for="NIK">Emp. Id</label>
                 <input required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />
                 <label for="FullName">Full Name</label>

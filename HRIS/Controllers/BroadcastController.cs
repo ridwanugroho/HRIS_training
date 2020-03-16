@@ -30,12 +30,12 @@ namespace HRIS.Controllers
         [HttpPost]
         public IActionResult SendBroadcast(string title, string subject, string message)
         {
-            var addresses = (from e in db.Employee select e.Email).ToList();
+            var addresses = (from e in db.Employee where e.DataStatus != 0 && e.Email != string.Empty select e.Email).ToList();
 
             var sendThread = new Thread(() => sendTask(addresses, title, subject, message));
             sendThread.Start();
 
-            return RedirectToAction("BroadcastCOnfirmation");
+            return RedirectToAction("BroadcastConfirmation");
 
         }
 
@@ -53,7 +53,14 @@ namespace HRIS.Controllers
 
             foreach (var addr in addresses)
             {
-                MailController.sendMail("admin@tokoaneh.com", addr, subject, mailBody);
+                try
+                {
+                    MailController.sendMail("admin@tokoaneh.com", addr, subject, mailBody);
+                }
+                catch
+                {
+                    return;
+                }
             }
         }
     }

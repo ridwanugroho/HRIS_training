@@ -38,6 +38,8 @@
         <form id="input-form" class="w-full max-w-lg" action="javascript: submit()">
             @if (editStatus)
             {
+                <input type="text" id="Photo" name="Photo" hidden value="" />
+                <input type="text" id="CV" name="CV" hidden value="" />
                 <input id="Id" name="Id" value="@edit.Id" hidden />
                 <label for="NIK">Applicant Id</label>
                 <input value="@edit.NIK" required type="text" id="NIK" name="NIK" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded p-1 mb-3 leading-tight focus:outline-none focus:bg-white" />

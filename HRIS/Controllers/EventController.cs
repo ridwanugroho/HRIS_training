@@ -93,5 +93,17 @@ namespace HRIS.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [Authorize]
+        public IActionResult Remove(string id)
+        {
+            var evt = db.Event.Find(Guid.Parse(id));
+
+            db.Event.Remove(evt);
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }
